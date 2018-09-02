@@ -51,6 +51,11 @@
 			<version>${project.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>ar.com.gbem.istea.estacionamientos</groupId>
+			<artifactId>dtos</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -15,5 +15,6 @@
 		<module>repositories</module>
 		<module>core</module>
 		<module>web</module>
+		<module>dtos</module>
 	</modules>
 </project>
