@@ -1,0 +1,10 @@
+<dataConfig>
+    <dataSource driver="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost:3306/est_db" user="est_app" password="estacionamiento" />
+    <document>
+        <entity name="item" query="select * from test_table">
+		<field column="ID" name="id" />            
+		<field column="NOMBRE" name="nombre" />
+        </entity>
+    </document>
+</dataConfig>
+

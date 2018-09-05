@@ -1,0 +1,32 @@
+Instalación general
+	Bajarse solr 7.4.0 e instalarlo
+	Hacer un "bin/solr start" desde consola (solr.cmd en windows)
+	Comprobar en un navegador que http://localhost:8983/solr/ abre el dashboard. También se puede ver con "bin/solr status".
+	Bajarse el connector para la base de datos. Se utilizó mysql-connector-java-8.0.12.jar
+	Guardar el connector en la carpeta de solr /dist
+
+Core Estacionamientos
+	Crear el core haciendo "bin/solr create -c est_core"
+	Detener solr con "bin/solr stop"
+	En la carpeta de solr, dentro de server/solr/ debería existir una carpeta est_core
+	Dentro de est_core/conf pegar los archivos data-config.xml, solrconfig.xml, schema.xml (sacarle el .bak)
+	En el solrconfig.xml editar lo siguiente:
+		  <lib dir="${solr.install.dir:../../../..}/dist/" regex="mysql-connector-java-8.0.12.jar" />
+		sólo en el caso de que se haya cambiado el connector o la ruta donde se dejó el connector.
+	Editar en el data-config.xml los datos de la base si es necesario, como el connector, usuario, password y url.
+ 	Iniciar solr otra vez.
+ 	Ir a http://localhost:8983/solr/ , Entrar al Core Admin
+ 	Clic en Add Core, y completar con est_core en los campos name e instanceDir.
+ 	Clic en el Add Core de abajo para confirmar
+ 	
+ 
+Carga inicial
+	Con la base de datos levantada, entrar a http://localhost:8983/solr/
+	En el combo Core Selector elegir el est_core
+	Ir a la solapa Dataimport
+	Tildar el check Auto-Refresh Status para ver lo que vaya sucediendo
+	Asegurarse de que está el check "commit" activado y el command es full-import
+	Clic en Execute
+	Si todo salió bien, debería decir que se indexaron una cantidad de documentos. 
+	Para hacer la comprobación manual, podemos ir a la solapa Query, y buscar el botón Execute Query. Si nos devuelve resultados, terminamos.
+	
