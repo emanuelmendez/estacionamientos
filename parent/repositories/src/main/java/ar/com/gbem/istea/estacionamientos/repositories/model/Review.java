@@ -29,7 +29,7 @@ public class Review {
 	private Date dateReviewed;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID")
+	@JoinColumn(name = "RESERVATION")
 	private Reservation reservation;
 
 	public long getId() {

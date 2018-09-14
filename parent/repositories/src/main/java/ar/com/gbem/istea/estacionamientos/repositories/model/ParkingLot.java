@@ -21,7 +21,7 @@ public class ParkingLot implements Comparable<ParkingLot> {
 	private int lotNumber;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID")
+	@JoinColumn(name = "ADDRESS")
 	private Address address;
 
 	private String description;

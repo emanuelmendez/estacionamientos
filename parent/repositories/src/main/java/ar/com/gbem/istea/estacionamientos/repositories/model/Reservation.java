@@ -22,19 +22,19 @@ public class Reservation {
 	private long id;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID")
+	@JoinColumn(name = "DRIVER")
 	private User driver;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID")
+	@JoinColumn(name = "LENDER")
 	private User lender;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID")
+	@JoinColumn(name = "VEHICLE")
 	private Vehicle vehicle;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID")
+	@JoinColumn(name = "PARKING_LOT")
 	private ParkingLot parkingLot;
 
 	@Column(name = "DATE_FROM")
