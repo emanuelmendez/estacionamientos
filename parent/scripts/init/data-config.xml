@@ -1,9 +1,27 @@
 <dataConfig>
     <dataSource driver="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost:3306/est_db" user="est_app" password="estacionamiento" />
     <document>
-        <entity name="item" query="select * from test_table">
+        <entity name="parking_lot" query="
+SELECT 
+p.id as ID, 
+p.DESCRIPTION as DESCRIPTION,
+CONCAT(a.LATITUDE, ',', a.LONGITUDE) as COORDINATES,
+a.id as ADDRESS_ID,
+p.LOT_NUMBER as LOT_NUMBER,
+a.STREET_ADDRESS as STREET_ADDRESS,
+u.ID as USER_ID
+FROM est_db.PARKING_LOT p
+LEFT JOIN est_db.USER u ON p.user = u.id
+LEFT JOIN est_db.ADDRESS a ON p.address = a.id
+WHERE u.active = 1 and p.active = 1;
+">
 		<field column="ID" name="id" />            
-		<field column="NOMBRE" name="nombre" />
+		<field column="DESCRIPTION" name="description" />
+		<field column="COORDINATES" name="coordinates" />
+		<field column="ADDRESS_ID" name="address_id" />
+		<field column="LOT_NUMBER" name="lot_number" />
+		<field column="STREET_ADDRESS" name="street_address" />
+		<field column="USER_ID" name="user_id" />
         </entity>
     </document>
 </dataConfig>

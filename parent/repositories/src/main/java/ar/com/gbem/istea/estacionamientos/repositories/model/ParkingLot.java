@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -30,6 +31,10 @@ public class ParkingLot implements Comparable<ParkingLot> {
 
 	private boolean active;
 
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "USER")
+	private User user;
+	
 	public long getId() {
 		return id;
 	}
@@ -76,6 +81,14 @@ public class ParkingLot implements Comparable<ParkingLot> {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	@Override

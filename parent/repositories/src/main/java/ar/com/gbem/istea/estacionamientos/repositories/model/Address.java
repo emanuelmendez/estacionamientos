@@ -135,10 +135,8 @@ public class Address {
 		if (Double.doubleToLongBits(latitude) != Double.doubleToLongBits(other.latitude)) {
 			return false;
 		}
-		if (Double.doubleToLongBits(longitude) != Double.doubleToLongBits(other.longitude)) {
-			return false;
-		}
-		return true;
+
+		return Double.doubleToLongBits(longitude) == Double.doubleToLongBits(other.longitude);
 	}
 
 }
