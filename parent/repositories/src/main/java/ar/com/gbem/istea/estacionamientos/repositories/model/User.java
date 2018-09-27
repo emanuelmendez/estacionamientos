@@ -31,6 +31,8 @@ public class User {
 
 	private String surname;
 
+	private String token;
+
 	private Date since;
 
 	@Column(name = "LAST_UPDATED")
@@ -110,6 +112,14 @@ public class User {
 		this.lastUpdated = lastUpdated;
 	}
 
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
 	public boolean isActive() {
 		return active;
 	}
@@ -141,6 +151,7 @@ public class User {
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((phone == null) ? 0 : phone.hashCode());
 		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		result = prime * result + ((token == null) ? 0 : token.hashCode());
 		return result;
 	}
 
@@ -171,6 +182,13 @@ public class User {
 				return false;
 			}
 		} else if (!username.equals(other.username)) {
+			return false;
+		}
+		if (token == null) {
+			if (other.token != null) {
+				return false;
+			}
+		} else if (!token.equals(other.token)) {
 			return false;
 		}
 		return true;

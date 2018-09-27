@@ -1,7 +1,5 @@
 package ar.com.gbem.istea.estacionamientos.web.controllers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,24 +14,14 @@ import ar.com.gbem.istea.estacionamientos.core.services.UserService;
 import ar.gob.gbem.istea.estacionamientos.dtos.UserResultDTO;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
 	@Autowired
 	private UserService userService;
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<List<UserResultDTO>> listAllUsers() {
-		List<UserResultDTO> users = userService.findAllUsers();
-		if (users.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		}
-		return new ResponseEntity<>(users, HttpStatus.OK);
-	}
-
 	@RequestMapping(method = RequestMethod.POST, consumes = { "application/json" })
 	public @ResponseBody ResponseEntity<String> addNewUser(@RequestBody(required = true) UserResultDTO userData) {
-
 		userService.addUser(userData);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
@@ -41,6 +29,10 @@ public class UserController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<UserResultDTO> getUser(@PathVariable Long id) {
 		UserResultDTO user = userService.getUserById(id);
+		if (user == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
+
 }

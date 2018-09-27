@@ -12,4 +12,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
 	User findByActive(int active);
 
+	User findByToken(String payloadSubject);
+
 }
