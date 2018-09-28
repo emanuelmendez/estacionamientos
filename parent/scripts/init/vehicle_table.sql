@@ -4,6 +4,9 @@ CREATE TABLE `est_db`.`VEHICLE` (
   `PLATE` VARCHAR(45) NOT NULL,
   `ACTIVE` TINYINT NOT NULL,
   `USER` INT NOT NULL,
+  `BRAND` VARCHAR(70) NOT NULL,
+  `MODEL` VARCHAR(70) NOT NULL,
+  `COLOR` VARCHAR(30) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE INDEX `PLATE_UNIQUE` (`PLATE` ASC) VISIBLE,
   INDEX `fk_VEHICLE_USER_idx` (`USER` ASC) VISIBLE,
@@ -13,3 +16,14 @@ CREATE TABLE `est_db`.`VEHICLE` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
+    
+/***************************************/
+    
+INSERT INTO vehicle(PLATE,ACTIVE,USER,BRAND,MODEL,COLOR)
+VALUES
+('LSK953',1,1,'Ford','Ka','Blanco'),
+('TGB444',1,1,'Fiat','Palio','Rojo'),
+('GST541',1,1,'Renault','Clio','Azul claro'),
+('YHN885',1,1,'Ford','Fiesta','Turquesa'),
+('ESG413',1,1,'Audi','C4','Gris claro'),
+('LSK953',1,1,'Peugeot','206','Negro');

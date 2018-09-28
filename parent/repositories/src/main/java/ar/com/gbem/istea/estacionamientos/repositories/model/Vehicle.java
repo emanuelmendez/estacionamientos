@@ -16,7 +16,15 @@ public class Vehicle {
 	private String plate;
 
 	private boolean active;
-
+	
+	private String brand;
+	
+	private String model;
+	
+	private String color;
+	
+	private long user;
+	
 	public long getId() {
 		return id;
 	}
@@ -39,6 +47,38 @@ public class Vehicle {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public String getBrand() {
+		return brand;
+	}
+
+	public void setBrand(String brand) {
+		this.brand = brand;
+	}
+
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public long getUser() {
+		return user;
+	}
+
+	public void setUser(long user) {
+		this.user = user;
 	}
 
 	@Override
