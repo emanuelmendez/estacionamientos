@@ -78,6 +78,7 @@ public class OAuth2Filter extends GenericFilterBean {
 		Payload payload = idToken.getPayload();
 		String subject = payload.getSubject();
 
+		// cambiar si es un signup
 		if (!userService.exists(subject)) {
 			httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "User needs to signup to continue");
 			return;
