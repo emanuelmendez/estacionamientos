@@ -21,9 +21,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		http.csrf().disable();
 
-		http.authorizeRequests().anyRequest()
-		// cambiar lo siguiente a permitAll() para deshabilitarlo
-			.authenticated().and().addFilterBefore(oAuth2Filter,BasicAuthenticationFilter.class);
+		http.authorizeRequests().anyRequest().permitAll().and().addFilterBefore(oAuth2Filter,
+				BasicAuthenticationFilter.class);
 	}
 
 }

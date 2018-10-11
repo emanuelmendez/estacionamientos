@@ -40,16 +40,16 @@ public class OAuth2Filter extends GenericFilterBean {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		HttpServletResponse httpResponse = (HttpServletResponse) response;
-		String token = httpRequest.getHeader(API_TOKEN);
+		final HttpServletRequest httpRequest = (HttpServletRequest) request;
+		final HttpServletResponse httpResponse = (HttpServletResponse) response;
+		final String token = httpRequest.getHeader(API_TOKEN);
 
-		if (token == null) {
+		if (token == null || token.trim().isEmpty()) {
 			httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Client must provide an api_token");
 			return;
 		}
 
-		HttpTransport httpTransport;
+		final HttpTransport httpTransport;
 		try {
 			httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 		} catch (GeneralSecurityException e) {
@@ -58,10 +58,10 @@ public class OAuth2Filter extends GenericFilterBean {
 			return;
 		}
 
-		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(httpTransport,
+		final GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(httpTransport,
 				JacksonFactory.getDefaultInstance()).setAudience(Collections.singletonList(CLIENT_ID)).build();
 
-		GoogleIdToken idToken;
+		final GoogleIdToken idToken;
 		try {
 			idToken = verifier.verify(token);
 		} catch (Exception e) {
@@ -75,20 +75,20 @@ public class OAuth2Filter extends GenericFilterBean {
 			return;
 		}
 
-		Payload payload = idToken.getPayload();
-		String subject = payload.getSubject();
+		final Payload payload = idToken.getPayload();
+		final String subject = payload.getSubject();
 
-		// cambiar si es un signup
-		if (!userService.exists(subject)) {
+		if (httpRequest.getServletPath().equals("/signin")) {
+
+			String email = payload.getEmail();
+			String familyName = (String) payload.get("family_name");
+			String givenName = (String) payload.get("given_name");
+
+			httpRequest.getSession().setAttribute("email", email);
+		} else if (!userService.exists(subject)) {
 			httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "User needs to signup to continue");
 			return;
 		}
-
-		// TODO ver para obtener estos datos del payload en el alta de usuario
-//		boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-//		String name = (String) payload.get("name");
-//		String familyName = (String) payload.get("family_name");
-//		String givenName = (String) payload.get("given_name");
 
 		chain.doFilter(request, response);
 	}
