@@ -40,7 +40,7 @@ public class User {
 
 	private boolean active;
 
-	@JoinColumn(name = "ID")
+	@JoinColumn(name = "USER")
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Vehicle> vehicles;
 

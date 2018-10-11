@@ -1,5 +1,7 @@
 package ar.com.gbem.istea.estacionamientos.web.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.com.gbem.istea.estacionamientos.core.services.UserService;
+import ar.com.gbem.istea.estacionamientos.repositories.UserVehicle;
 import ar.gob.gbem.istea.estacionamientos.dtos.UserResultDTO;
+import ar.gob.gbem.istea.estacionamientos.dtos.VehicleDTO;
 
 @RestController
 @RequestMapping("/users")
@@ -33,6 +37,15 @@ public class UserController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(user, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/{id}/vehicles", method = RequestMethod.GET)
+	public ResponseEntity<List<VehicleDTO>> getVehiclesByUser(@PathVariable Long id) {
+		List<VehicleDTO> userVehicle = userService.getVehiclesByIdUser(id);
+		if (userVehicle == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(userVehicle, HttpStatus.OK);
 	}
 
 }
