@@ -48,4 +48,20 @@ public class UserController {
 		return new ResponseEntity<>(userVehicle, HttpStatus.OK);
 	}
 
+	@RequestMapping(value = "/{id}/vehicles/{idVehicle}", method = RequestMethod.DELETE)
+	public ResponseEntity<String> getVehiclesByUser(@PathVariable Long id, @PathVariable Long idVehicle) {
+		try {
+			userService.deleteUserVehicle(id, idVehicle);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+	}
+	
+	@RequestMapping(value = "/{id}/vehicles", method = RequestMethod.POST, consumes = { "application/json" })
+	public @ResponseBody ResponseEntity<String> addNewVehicle(@PathVariable Long id, @RequestBody(required = true) VehicleDTO vehicleData) {
+		userService.addUserVehicle(id, vehicleData);
+		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
+	
 }

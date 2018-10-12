@@ -67,4 +67,13 @@ public class UserService {
 		return dtos;
 	}
 	
+	public void deleteUserVehicle(long userId, long vehicleId) {
+		userRepo.deleteUserVehicleById(userId, vehicleId);
+	}
+	
+	public void addUserVehicle(long userId, VehicleDTO vehicleData) {
+		Vehicle newVehicle = mapper.map(vehicleData, Vehicle.class);
+		
+		userRepo.saveUserVehicle(newVehicle.getPlate(), 1, userId, newVehicle.getBrand(), newVehicle.getModel(), newVehicle.getColor());
+	}
 }
