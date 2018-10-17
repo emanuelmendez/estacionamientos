@@ -1,6 +1,10 @@
 package ar.gob.gbem.istea.estacionamientos.dtos;
 
-public class UserDataDTO {
+import java.io.Serializable;
+
+public class UserDataDTO implements Serializable {
+
+	private static final long serialVersionUID = 1099734696077576531L;
 
 	private String username;
 	private String email;

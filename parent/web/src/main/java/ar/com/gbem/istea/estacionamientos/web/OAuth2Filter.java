@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -25,13 +26,19 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
 import ar.com.gbem.istea.estacionamientos.core.services.UserService;
+import ar.gob.gbem.istea.estacionamientos.dtos.UserResultDTO;
 
 @Component
 public class OAuth2Filter extends GenericFilterBean {
 
+	@Value("${session.servlet.path}")
+	private String sessionPath;
+	
+	@Value("${google.client.id}")
+	private String clientId;
+	
 	private static final Logger LOG = LoggerFactory.getLogger(OAuth2Filter.class);
 	private static final String API_TOKEN = "api_token";
-	private static final String CLIENT_ID = "349020659959-ah8n75k13u1ekbgu59tfioqkgipc46mv.apps.googleusercontent.com";
 
 	@Autowired
 	private UserService userService;
@@ -59,7 +66,7 @@ public class OAuth2Filter extends GenericFilterBean {
 		}
 
 		final GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(httpTransport,
-				JacksonFactory.getDefaultInstance()).setAudience(Collections.singletonList(CLIENT_ID)).build();
+				JacksonFactory.getDefaultInstance()).setAudience(Collections.singletonList(clientId)).build();
 
 		final GoogleIdToken idToken;
 		try {
@@ -78,17 +85,17 @@ public class OAuth2Filter extends GenericFilterBean {
 		final Payload payload = idToken.getPayload();
 		final String subject = payload.getSubject();
 
-		if (httpRequest.getServletPath().equals("/signin")) {
+		if (!httpRequest.getServletPath().startsWith(sessionPath)) {
+			final UserResultDTO user = userService.findByToken(subject);
+			if (user == null) {
+				httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "User needs to signup to continue");
+				return;
+			}
 
-			String email = payload.getEmail();
-			String familyName = (String) payload.get("family_name");
-			String givenName = (String) payload.get("given_name");
-
-			httpRequest.getSession().setAttribute("email", email);
-		} else if (!userService.exists(subject)) {
-			httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "User needs to signup to continue");
-			return;
+			httpRequest.getSession().setAttribute("user", user);
 		}
+
+		httpRequest.getSession().setAttribute("subject", subject);
 
 		chain.doFilter(request, response);
 	}

@@ -5,6 +5,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,19 +15,16 @@ import ar.gob.gbem.istea.estacionamientos.dtos.UserDataDTO;
 import ar.gob.gbem.istea.estacionamientos.dtos.UserResultDTO;
 
 @RestController
-@RequestMapping("/signin")
-public class SignInController {
+@RequestMapping("/session")
+public class SessionController {
 
 	@Autowired
 	private UserService userService;
 
-	@RequestMapping(value = "", method = RequestMethod.GET)
+	@RequestMapping(value = "/signin", method = RequestMethod.GET)
 	public ResponseEntity<UserDataDTO> getUserData(HttpSession session, Long id) {
-		String email = (String) session.getAttribute("email");
-
-		System.out.println("email is " + email);
-
-		UserResultDTO user = userService.getUserById(id);
+		String subject = (String) session.getAttribute("subject");
+		UserResultDTO user = userService.findByToken(subject);
 		if (user == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
@@ -41,4 +39,20 @@ public class SignInController {
 
 		return new ResponseEntity<>(dto, HttpStatus.OK);
 	}
+
+	@RequestMapping(value = "/signup", method = RequestMethod.POST)
+	public ResponseEntity<Void> signUp(HttpSession session, @RequestBody(required = true) UserDataDTO dto) {
+		String subject = (String) session.getAttribute("subject");
+		UserResultDTO user = userService.findByToken(subject);
+		if (user != null) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+
+		if (userService.signUp(dto, subject)) {
+			return new ResponseEntity<>(HttpStatus.CREATED);
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 }
