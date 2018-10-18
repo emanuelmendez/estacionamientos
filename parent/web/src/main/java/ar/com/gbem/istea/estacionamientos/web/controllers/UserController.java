@@ -49,7 +49,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/{id}/vehicles/{idVehicle}", method = RequestMethod.DELETE)
-	public ResponseEntity<String> getVehiclesByUser(@PathVariable Long id, @PathVariable Long idVehicle) {
+	public ResponseEntity<String> deleteUserVehicleById(@PathVariable Long id, @PathVariable Long idVehicle) {
 		try {
 			userService.deleteUserVehicle(id, idVehicle);
 			return new ResponseEntity<>(HttpStatus.OK);
