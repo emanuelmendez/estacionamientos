@@ -1,6 +1,10 @@
 package ar.gob.gbem.istea.estacionamientos.dtos;
 
-public class ParkingLotResultDTO {
+import java.io.Serializable;
+
+public class ParkingLotResultDTO implements Serializable {
+
+	private static final long serialVersionUID = -2650522845717940780L;
 
 	private long id;
 	private String description;

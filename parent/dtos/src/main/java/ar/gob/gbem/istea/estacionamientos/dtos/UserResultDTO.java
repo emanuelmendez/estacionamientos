@@ -1,7 +1,9 @@
 package ar.gob.gbem.istea.estacionamientos.dtos;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class UserResultDTO implements Serializable {
 
@@ -14,6 +16,8 @@ public class UserResultDTO implements Serializable {
 	private String surname;
 	private Date since;
 	private Date lastUpdated;
+	private List<VehicleDTO> vehicles;
+	private List<ParkingLotResultDTO> parkingLots;
 	private boolean active;
 
 	public long getId() {
@@ -78,6 +82,22 @@ public class UserResultDTO implements Serializable {
 
 	public void setLastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;
+	}
+
+	public List<VehicleDTO> getVehicles() {
+		return vehicles == null ? new ArrayList<>() : vehicles;
+	}
+
+	public void setVehicles(List<VehicleDTO> vehicles) {
+		this.vehicles = vehicles;
+	}
+
+	public List<ParkingLotResultDTO> getParkingLots() {
+		return parkingLots == null ? new ArrayList<>() : parkingLots;
+	}
+
+	public void setParkingLots(List<ParkingLotResultDTO> parkingLots) {
+		this.parkingLots = parkingLots;
 	}
 
 	public boolean isActive() {

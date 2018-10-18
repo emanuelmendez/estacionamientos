@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
@@ -33,17 +34,14 @@ public class UserService {
 		}
 	}
 
-	public UserResultDTO getUserByPhone(String phone) {
-		User userData = userRepo.findByPhone(phone);
-		return mapper.map(userData, UserResultDTO.class);
+	public boolean existsByPhone(String phone) {
+		return userRepo.existsByPhone(phone);
 	}
 
+	@Transactional(readOnly = true)
 	public UserResultDTO findByToken(String payloadSubject) {
-		User u = userRepo.findByToken(payloadSubject);
-		if (u == null) {
-			return null;
-		}
-		return mapper.map(u, UserResultDTO.class);
+		User u = userRepo.getByToken(payloadSubject);
+		return u == null ? null : mapper.map(u, UserResultDTO.class);
 	}
 
 	public boolean signUp(UserDataDTO dto, String subject) {

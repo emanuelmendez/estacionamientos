@@ -22,22 +22,14 @@ public class SessionController {
 	private UserService userService;
 
 	@RequestMapping(value = "/signin", method = RequestMethod.GET)
-	public ResponseEntity<UserDataDTO> getUserData(HttpSession session, Long id) {
+	public ResponseEntity<UserResultDTO> getUserData(HttpSession session) {
 		String subject = (String) session.getAttribute("subject");
 		UserResultDTO user = userService.findByToken(subject);
 		if (user == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 
-		UserDataDTO dto = new UserDataDTO();
-		dto.setEmail(user.getEmail());
-		dto.setHasParkingLots(false);
-		dto.setHasVehicles(true);
-		dto.setName(user.getName());
-		dto.setSurname(user.getSurname());
-		dto.setPhone(user.getPhone());
-
-		return new ResponseEntity<>(dto, HttpStatus.OK);
+		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/signup", method = RequestMethod.POST)

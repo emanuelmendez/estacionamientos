@@ -1,19 +1,17 @@
 package ar.gob.gbem.istea.estacionamientos.dtos;
 
-public class VehicleDTO {
-	
+import java.io.Serializable;
+
+public class VehicleDTO implements Serializable {
+
+	private static final long serialVersionUID = -2650522845717940780L;
+
 	private long id;
-
 	private String plate;
-
 	private boolean active;
-	
 	private String brand;
-	
 	private String model;
-	
 	private String color;
-	
 	private long user;
 
 	public long getId() {
@@ -63,7 +61,7 @@ public class VehicleDTO {
 	public void setColor(String color) {
 		this.color = color;
 	}
-	
+
 	public long getUser() {
 		return user;
 	}

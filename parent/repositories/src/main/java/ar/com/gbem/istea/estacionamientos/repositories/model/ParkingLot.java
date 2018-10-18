@@ -2,6 +2,7 @@ package ar.com.gbem.istea.estacionamientos.repositories.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -19,6 +20,7 @@ public class ParkingLot implements Comparable<ParkingLot> {
 	@GeneratedValue
 	private long id;
 
+	@Column(name = "LOT_NUMBER")
 	private int lotNumber;
 
 	@ManyToOne(fetch = FetchType.LAZY)

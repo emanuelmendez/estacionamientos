@@ -8,10 +8,10 @@ import ar.com.gbem.istea.estacionamientos.repositories.model.User;
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
 
-	User findByPhone(String phone);
+	boolean existsByPhone(String phone);
 
 	User findByActive(int active);
 
-	User findByToken(String payloadSubject);
+	User getByToken(String payloadSubject);
 
 }
