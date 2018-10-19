@@ -76,4 +76,10 @@ public class UserService {
 		
 		userRepo.saveUserVehicle(newVehicle.getPlate(), 1, userId, newVehicle.getBrand(), newVehicle.getModel(), newVehicle.getColor());
 	}
+	
+	public void editUserVehicle(long userId, long vehicleId, VehicleDTO vehicleData) {
+		Vehicle editVehicle = mapper.map(vehicleData, Vehicle.class);
+		
+		userRepo.editUserVehicle(vehicleId, editVehicle.getPlate(), userId, editVehicle.getBrand(), editVehicle.getModel(), editVehicle.getColor());
+	}
 }
