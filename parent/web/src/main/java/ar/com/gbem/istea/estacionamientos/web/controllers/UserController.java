@@ -46,8 +46,8 @@ public class UserController {
 			userService.deleteUserVehicle(id, idVehicle);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.CONFLICT);
-		}
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}                                                                                                           
 	}
 	
 	@RequestMapping(value = "/{id}/vehicles", method = RequestMethod.POST, consumes = { "application/json" })
@@ -55,5 +55,12 @@ public class UserController {
 		userService.addUserVehicle(id, vehicleData);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
+	
+	@RequestMapping(value = "/{id}/vehicles/{idVehicle}", method = RequestMethod.PATCH, consumes = { "application/json" })
+	public @ResponseBody ResponseEntity<String> editVehicle(@PathVariable Long id, @PathVariable Long idVehicle, @RequestBody(required = true) VehicleDTO vehicleData) {
+		userService.editUserVehicle(id, idVehicle, vehicleData);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
 	
 }
