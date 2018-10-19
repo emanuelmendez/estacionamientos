@@ -57,7 +57,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/{id}/vehicles/{idVehicle}", method = RequestMethod.PATCH, consumes = { "application/json" })
-	public @ResponseBody ResponseEntity<String> editVehicle(@PathVariable Long id, @PathVariable Long idVehicle, @RequestBody(required = true) VehicleDTO vehicleData) {
+	public ResponseEntity<String> editVehicle(@PathVariable Long id, @PathVariable Long idVehicle, @RequestBody(required = true) VehicleDTO vehicleData) {
 		userService.editUserVehicle(id, idVehicle, vehicleData);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
