@@ -49,16 +49,16 @@ public class UserService {
 		return u == null ? null : mapper.map(u, UserResultDTO.class);
 	}
 
-	public boolean signUp(UserDataDTO dto, String subject) {
+	public UserResultDTO signUp(UserDataDTO dto, String subject) {
 		User user = mapper.map(dto, User.class);
 		user.setActive(true);
 		user.setToken(subject);
 
 		try {
-			return userRepo.save(user) != null;
+			return mapper.map(userRepo.save(user), UserResultDTO.class);
 		} catch (Exception e) {
 			logger.error("Signup of user failed", e);
-			return false;
+			return null;
 		}
 	}
 

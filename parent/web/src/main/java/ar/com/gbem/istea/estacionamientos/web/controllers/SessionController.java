@@ -33,15 +33,16 @@ public class SessionController {
 	}
 
 	@RequestMapping(value = "/signup", method = RequestMethod.POST)
-	public ResponseEntity<Void> signUp(HttpSession session, @RequestBody(required = true) UserDataDTO dto) {
+	public ResponseEntity<UserResultDTO> signUp(HttpSession session, @RequestBody(required = true) UserDataDTO dto) {
 		String subject = (String) session.getAttribute("subject");
 		UserResultDTO user = userService.findByToken(subject);
 		if (user != null) {
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(user, HttpStatus.OK);
 		}
 
-		if (userService.signUp(dto, subject)) {
-			return new ResponseEntity<>(HttpStatus.CREATED);
+		user = userService.signUp(dto, subject);
+		if (user != null) {
+			return new ResponseEntity<>(user, HttpStatus.CREATED);
 		} else {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
