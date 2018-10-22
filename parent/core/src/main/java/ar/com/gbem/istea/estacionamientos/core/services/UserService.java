@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 
+import ar.com.gbem.istea.estacionamientos.core.exceptions.NotUniquePhoneException;
 import ar.com.gbem.istea.estacionamientos.repositories.UserRepository;
 import ar.com.gbem.istea.estacionamientos.repositories.UserVehicle;
 import ar.com.gbem.istea.estacionamientos.repositories.model.User;
@@ -49,10 +50,15 @@ public class UserService {
 		return u == null ? null : mapper.map(u, UserResultDTO.class);
 	}
 
-	public UserResultDTO signUp(UserDataDTO dto, String subject) {
+	public UserResultDTO signUp(UserDataDTO dto, String subject) throws NotUniquePhoneException {
+		if (existsByPhone(dto.getPhone())) {
+			throw new NotUniquePhoneException("Phone already taken");
+		}
+		
 		User user = mapper.map(dto, User.class);
 		user.setActive(true);
 		user.setToken(subject);
+		user.setUsername(dto.getEmail());
 
 		try {
 			return mapper.map(userRepo.save(user), UserResultDTO.class);

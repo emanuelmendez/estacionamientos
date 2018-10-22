@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import ar.com.gbem.istea.estacionamientos.core.exceptions.NotUniquePhoneException;
 import ar.com.gbem.istea.estacionamientos.core.services.UserService;
 import ar.gob.gbem.istea.estacionamientos.dtos.UserDataDTO;
 import ar.gob.gbem.istea.estacionamientos.dtos.UserResultDTO;
@@ -40,7 +41,11 @@ public class SessionController {
 			return new ResponseEntity<>(user, HttpStatus.OK);
 		}
 
-		user = userService.signUp(dto, subject);
+		try {
+			user = userService.signUp(dto, subject);
+		} catch (NotUniquePhoneException e) {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
 		if (user != null) {
 			return new ResponseEntity<>(user, HttpStatus.CREATED);
 		} else {
