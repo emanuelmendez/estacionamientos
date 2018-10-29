@@ -115,4 +115,9 @@ public class Vehicle {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return brand + " " + model + " " + color + " (" + plate + ")";
+	}
+
 }

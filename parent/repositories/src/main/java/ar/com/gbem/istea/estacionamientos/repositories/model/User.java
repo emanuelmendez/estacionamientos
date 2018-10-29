@@ -149,9 +149,8 @@ public class User {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result + ((phone == null) ? 0 : phone.hashCode());
-		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		result = prime * result + ((token == null) ? 0 : token.hashCode());
+		result = prime * result + ((phone == null) ? 0 : phone.hashCode());
 		return result;
 	}
 
@@ -170,20 +169,6 @@ public class User {
 		if (id != other.id) {
 			return false;
 		}
-		if (phone == null) {
-			if (other.phone != null) {
-				return false;
-			}
-		} else if (!phone.equals(other.phone)) {
-			return false;
-		}
-		if (username == null) {
-			if (other.username != null) {
-				return false;
-			}
-		} else if (!username.equals(other.username)) {
-			return false;
-		}
 		if (token == null) {
 			if (other.token != null) {
 				return false;
@@ -191,6 +176,15 @@ public class User {
 		} else if (!token.equals(other.token)) {
 			return false;
 		}
+
+		if (username == null) {
+			if (other.username != null) {
+				return false;
+			}
+		} else if (!username.equals(other.username)) {
+			return false;
+		}
+
 		return true;
 	}
 
