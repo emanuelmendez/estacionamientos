@@ -2,6 +2,7 @@ package ar.com.gbem.istea.estacionamientos.repositories.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -10,7 +11,7 @@ import javax.persistence.Table;
 public class Vehicle {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	private String plate;
@@ -22,8 +23,6 @@ public class Vehicle {
 	private String model;
 	
 	private String color;
-	
-	private long user;
 	
 	public long getId() {
 		return id;
@@ -71,14 +70,6 @@ public class Vehicle {
 
 	public void setColor(String color) {
 		this.color = color;
-	}
-
-	public long getUser() {
-		return user;
-	}
-
-	public void setUser(long user) {
-		this.user = user;
 	}
 
 	@Override

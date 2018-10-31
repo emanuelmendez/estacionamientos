@@ -12,7 +12,6 @@ public class VehicleDTO implements Serializable {
 	private String brand;
 	private String model;
 	private String color;
-	private long user;
 
 	public long getId() {
 		return id;
@@ -60,14 +59,6 @@ public class VehicleDTO implements Serializable {
 
 	public void setColor(String color) {
 		this.color = color;
-	}
-
-	public long getUser() {
-		return user;
-	}
-
-	public void setUser(long user) {
-		this.user = user;
 	}
 
 	@Override

@@ -3,7 +3,7 @@ CREATE TABLE `est_db`.`VEHICLE` (
   `ID` INT NOT NULL AUTO_INCREMENT,
   `PLATE` VARCHAR(45) NOT NULL,
   `ACTIVE` TINYINT NOT NULL,
-  `USER` INT NOT NULL,
+  `USER` INT NULL,
   `BRAND` VARCHAR(70) NOT NULL,
   `MODEL` VARCHAR(70) NOT NULL,
   `COLOR` VARCHAR(30) NOT NULL,
@@ -26,4 +26,4 @@ VALUES
 ('GST541',1,1,'Renault','Clio','Azul claro'),
 ('YHN885',1,1,'Ford','Fiesta','Turquesa'),
 ('ESG413',1,1,'Audi','C4','Gris claro'),
-('LSK953',1,1,'Peugeot','206','Negro');
+('TGF888',1,1,'Peugeot','206','Negro');
