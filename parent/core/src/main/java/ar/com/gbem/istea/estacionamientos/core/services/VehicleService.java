@@ -1,17 +1,18 @@
 package ar.com.gbem.istea.estacionamientos.core.services;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.dozermapper.core.DozerBeanMapperBuilder;
-import com.github.dozermapper.core.Mapper;
-
+import ar.com.gbem.istea.estacionamientos.core.DozerUtil;
+import ar.com.gbem.istea.estacionamientos.core.exceptions.UserNotFoundException;
+import ar.com.gbem.istea.estacionamientos.core.exceptions.VehicleNotFoundException;
 import ar.com.gbem.istea.estacionamientos.repositories.UserVehicle;
 import ar.com.gbem.istea.estacionamientos.repositories.VehicleRepository;
 import ar.com.gbem.istea.estacionamientos.repositories.model.User;
@@ -21,59 +22,66 @@ import ar.gob.gbem.istea.estacionamientos.dtos.VehicleDTO;
 @Service
 public class VehicleService {
 
-	private Mapper mapper = DozerBeanMapperBuilder.buildDefault();
-	
+	private static final Logger LOG = LoggerFactory.getLogger(VehicleService.class);
+
+	@Autowired
+	private DozerUtil mapper;
+
 	@Autowired
 	private VehicleRepository vehicleRepository;
-	
-	public List<VehicleDTO> getVehiclesByUserId(Long id){
-		UserVehicle uv = vehicleRepository.findAllUserVehicleById(id);
-		List<VehicleDTO> dtos = new ArrayList<>();
-		
-		List<Vehicle> vehicles = uv.getVehicles();
-		
-		for(Vehicle ve : vehicles) {
-			dtos.add(mapper.map(ve, VehicleDTO.class));
-		}
-		
-		return dtos;
+
+	public List<VehicleDTO> getVehiclesByUserId(Long id) throws UserNotFoundException {
+		Optional<UserVehicle> optional = vehicleRepository.findAllUserVehicleById(id);
+
+		UserVehicle uv = optional.orElseThrow(UserNotFoundException::new);
+
+		return mapper.map(uv.getVehicles(), VehicleDTO.class);
 	}
-	
+
 	@Transactional
-	public void deleteUserVehicle(long userId, long vehicleId) {
-		
+	public void deleteUserVehicle(long userId, long vehicleId) throws UserNotFoundException, VehicleNotFoundException {
 		Optional<User> u = vehicleRepository.findById(userId);
-		
-		for (Iterator<Vehicle> iterator = u.get().getVehicles().iterator(); iterator.hasNext();){
-			if(iterator.next().getId() == vehicleId) {
+		User user = u.orElseThrow(UserNotFoundException::new);
+
+		for (Iterator<Vehicle> iterator = user.getVehicles().iterator(); iterator.hasNext();) {
+			if (iterator.next().getId() == vehicleId) {
 				iterator.remove();
-				break;
+				return;
 			}
 		}
+
+		LOG.error("Vehicle not found: id {}", vehicleId);
+		throw new VehicleNotFoundException();
 	}
-	
+
 	@Transactional
-	public void addUserVehicle(long userId, VehicleDTO vehicleData) {
-		
+	public void addUserVehicle(long userId, VehicleDTO vehicleData) throws UserNotFoundException {
+		Optional<User> u = vehicleRepository.findById(userId);
+		User user = u.orElseThrow(UserNotFoundException::new);
+
 		Vehicle newVehicle = mapper.map(vehicleData, Vehicle.class);
-		Optional<User> u = vehicleRepository.findById(userId);
-		
-		u.get().getVehicles().add(newVehicle);
+
+		user.getVehicles().add(newVehicle);
 	}
-	
+
 	@Transactional
-	public void editUserVehicle(long userId, long vehicleId, VehicleDTO vehicleData) {
-		
-		Vehicle editVehicle = mapper.map(vehicleData, Vehicle.class);
+	public void editUserVehicle(long userId, long vehicleId, VehicleDTO vehicleData)
+			throws UserNotFoundException, VehicleNotFoundException {
 		Optional<User> u = vehicleRepository.findById(userId);
-		
-		for (Vehicle v : u.get().getVehicles()) {
-			if(v.getId() == vehicleId) {
-				v.setBrand(editVehicle.getBrand());
-				v.setColor(editVehicle.getColor());
-				v.setModel(editVehicle.getModel());
-				v.setPlate(editVehicle.getPlate());
+
+		User user = u.orElseThrow(UserNotFoundException::new);
+
+		for (Vehicle v : user.getVehicles()) {
+			if (v.getId() == vehicleId) {
+				v.setBrand(vehicleData.getBrand());
+				v.setColor(vehicleData.getColor());
+				v.setModel(vehicleData.getModel());
+				v.setPlate(vehicleData.getPlate());
+				return;
 			}
 		}
+
+		LOG.error("Vehicle not found: id {}", vehicleId);
+		throw new VehicleNotFoundException();
 	}
 }
