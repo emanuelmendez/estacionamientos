@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.dozermapper.core.DozerBeanMapperBuilder;
-import com.github.dozermapper.core.Mapper;
-
+import ar.com.gbem.istea.estacionamientos.core.DozerUtil;
 import ar.com.gbem.istea.estacionamientos.core.exceptions.NotUniquePhoneException;
 import ar.com.gbem.istea.estacionamientos.repositories.UserRepository;
 import ar.com.gbem.istea.estacionamientos.repositories.model.User;
@@ -21,7 +19,9 @@ import ar.gob.gbem.istea.estacionamientos.dtos.UserResultDTO;
 public class UserService {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-	private Mapper mapper = DozerBeanMapperBuilder.buildDefault();
+
+	@Autowired
+	private DozerUtil mapper;
 
 	@Autowired
 	private UserRepository userRepo;
@@ -49,7 +49,7 @@ public class UserService {
 		if (existsByPhone(dto.getPhone())) {
 			throw new NotUniquePhoneException("Phone already taken");
 		}
-		
+
 		User user = mapper.map(dto, User.class);
 		user.setActive(true);
 		user.setToken(subject);
