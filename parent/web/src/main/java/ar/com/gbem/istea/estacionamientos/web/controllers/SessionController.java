@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.com.gbem.istea.estacionamientos.core.exceptions.NotUniquePhoneException;
+import ar.com.gbem.istea.estacionamientos.core.exceptions.UserNotFoundException;
 import ar.com.gbem.istea.estacionamientos.core.services.UserService;
 import ar.gob.gbem.istea.estacionamientos.dtos.UserDataDTO;
 import ar.gob.gbem.istea.estacionamientos.dtos.UserResultDTO;
@@ -25,20 +26,23 @@ public class SessionController {
 	@RequestMapping(value = "/signin", method = RequestMethod.GET)
 	public ResponseEntity<UserResultDTO> getUserData(HttpSession session) {
 		String subject = (String) session.getAttribute("subject");
-		UserResultDTO user = userService.findByToken(subject);
-		if (user == null) {
+		try {
+			UserResultDTO user = userService.findByToken(subject);
+			return new ResponseEntity<>(user, HttpStatus.OK);
+		} catch (UserNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-
-		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/signup", method = RequestMethod.POST)
 	public ResponseEntity<UserResultDTO> signUp(HttpSession session, @RequestBody(required = true) UserDataDTO dto) {
 		String subject = (String) session.getAttribute("subject");
-		UserResultDTO user = userService.findByToken(subject);
-		if (user != null) {
+		UserResultDTO user = null;
+		try {
+			user = userService.findByToken(subject);
 			return new ResponseEntity<>(user, HttpStatus.OK);
+		} catch (UserNotFoundException e) {
+			// do nothing
 		}
 
 		try {
@@ -46,6 +50,7 @@ public class SessionController {
 		} catch (NotUniquePhoneException e) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
+
 		if (user != null) {
 			return new ResponseEntity<>(user, HttpStatus.CREATED);
 		} else {

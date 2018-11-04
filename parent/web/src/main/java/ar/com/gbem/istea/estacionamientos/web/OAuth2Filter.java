@@ -25,6 +25,7 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
+import ar.com.gbem.istea.estacionamientos.core.exceptions.UserNotFoundException;
 import ar.com.gbem.istea.estacionamientos.core.services.UserService;
 import ar.gob.gbem.istea.estacionamientos.dtos.UserResultDTO;
 
@@ -33,10 +34,10 @@ public class OAuth2Filter extends GenericFilterBean {
 
 	@Value("${session.servlet.path}")
 	private String sessionPath;
-	
+
 	@Value("${google.client.id}")
 	private String clientId;
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(OAuth2Filter.class);
 	private static final String API_TOKEN = "api_token";
 
@@ -86,8 +87,10 @@ public class OAuth2Filter extends GenericFilterBean {
 		final String subject = payload.getSubject();
 
 		if (!httpRequest.getServletPath().startsWith(sessionPath)) {
-			final UserResultDTO user = userService.findByToken(subject);
-			if (user == null) {
+			UserResultDTO user;
+			try {
+				user = userService.findByToken(subject);
+			} catch (UserNotFoundException e) {
 				httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "User needs to signup to continue");
 				return;
 			}

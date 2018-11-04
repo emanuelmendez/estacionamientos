@@ -1,5 +1,6 @@
 package ar.com.gbem.istea.estacionamientos.core.services;
 
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -26,11 +27,20 @@ public class ReservationsService {
 			Status.PENDING);
 
 	@Transactional(readOnly = true)
+	public ReservationDTO getCurrentOfDriverBySubject(String subject) {
+		Reservation reservation = reservationsRepo.findFirstByDriver_TokenAndStatusInAndToAfterOrderByFrom(subject,
+				ACTIVE_STATUS, new Date());
+		if (reservation == null)
+			return null;
+		return mapper.getReservationFrom(reservation);
+	}
+
+	@Transactional(readOnly = true)
 	public List<ReservationDTO> getOfDriverBySubject(String subject) {
 		List<Reservation> reservations = reservationsRepo.getOfDriverBySubject(subject, ACTIVE_STATUS);
 		return mapper.getReservationsFrom(reservations);
 	}
-	
+
 	@Transactional(readOnly = true)
 	public List<ReservationDTO> getOfLenderBySubject(String subject) {
 		List<Reservation> reservations = reservationsRepo.getOfLenderBySubject(subject, ACTIVE_STATUS);

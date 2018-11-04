@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import ar.com.gbem.istea.estacionamientos.core.exceptions.UserNotFoundException;
 import ar.com.gbem.istea.estacionamientos.core.services.UserService;
 import ar.gob.gbem.istea.estacionamientos.dtos.UserResultDTO;
 
@@ -20,10 +21,12 @@ public class UserController {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<UserResultDTO> getUser(@PathVariable Long id) {
-		UserResultDTO user = userService.getUserById(id);
-		if (user == null) {
+		UserResultDTO user;
+		try {
+			user = userService.getUserById(id);
+			return new ResponseEntity<>(user, HttpStatus.OK);
+		} catch (UserNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 }

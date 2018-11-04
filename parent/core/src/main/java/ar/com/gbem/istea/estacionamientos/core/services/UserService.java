@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.com.gbem.istea.estacionamientos.core.DozerUtil;
 import ar.com.gbem.istea.estacionamientos.core.exceptions.NotUniquePhoneException;
+import ar.com.gbem.istea.estacionamientos.core.exceptions.UserNotFoundException;
 import ar.com.gbem.istea.estacionamientos.repositories.UserRepository;
 import ar.com.gbem.istea.estacionamientos.repositories.model.User;
 import ar.gob.gbem.istea.estacionamientos.dtos.UserDataDTO;
@@ -26,13 +27,10 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepo;
 
-	public UserResultDTO getUserById(Long id) {
+	public UserResultDTO getUserById(Long id) throws UserNotFoundException {
 		Optional<User> userData = userRepo.findById(id);
-		if (userData.isPresent()) {
-			return mapper.map(userData.get(), UserResultDTO.class);
-		} else {
-			return null;
-		}
+		User u = userData.orElseThrow(UserNotFoundException::new);
+		return mapper.map(u, UserResultDTO.class);
 	}
 
 	public boolean existsByPhone(String phone) {
@@ -40,9 +38,14 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public UserResultDTO findByToken(String payloadSubject) {
+	public UserResultDTO findByToken(String payloadSubject) throws UserNotFoundException {
 		User u = userRepo.getByToken(payloadSubject);
-		return u == null ? null : mapper.map(u, UserResultDTO.class);
+
+		if (u != null) {
+			return mapper.map(u, UserResultDTO.class);
+		} else {
+			throw new UserNotFoundException();
+		}
 	}
 
 	public UserResultDTO signUp(UserDataDTO dto, String subject) throws NotUniquePhoneException {

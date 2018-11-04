@@ -22,7 +22,7 @@ public class ReservationController {
 	private ReservationsService reservationsService;
 
 	@RequestMapping(value = "/driver", method = RequestMethod.GET)
-	public ResponseEntity<List<ReservationDTO>> getCurrentByDriverUser(HttpSession session) {
+	public ResponseEntity<List<ReservationDTO>> getReservationsByDriverUser(HttpSession session) {
 		String subject = (String) session.getAttribute("subject");
 
 		List<ReservationDTO> reservations = reservationsService.getOfDriverBySubject(subject);
@@ -31,6 +31,17 @@ public class ReservationController {
 		}
 
 		return new ResponseEntity<>(reservations, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/driver/current", method = RequestMethod.GET)
+	public ResponseEntity<ReservationDTO> getCurrentByDriverUser(HttpSession session) {
+		String subject = (String) session.getAttribute("subject");
+
+		ReservationDTO reservation = reservationsService.getCurrentOfDriverBySubject(subject);
+		if (reservation == null) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(reservation, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/lender", method = RequestMethod.GET)
