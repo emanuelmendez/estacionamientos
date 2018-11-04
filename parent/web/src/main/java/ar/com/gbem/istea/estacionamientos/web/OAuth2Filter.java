@@ -95,10 +95,10 @@ public class OAuth2Filter extends GenericFilterBean {
 				return;
 			}
 
-			httpRequest.getSession().setAttribute("user", user);
+			httpRequest.getSession().setAttribute(Constants.USER, user);
 		}
 
-		httpRequest.getSession().setAttribute("subject", subject);
+		httpRequest.getSession().setAttribute(Constants.SUBJECT, subject);
 
 		chain.doFilter(request, response);
 	}

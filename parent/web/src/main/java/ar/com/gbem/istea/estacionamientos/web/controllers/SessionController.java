@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ar.com.gbem.istea.estacionamientos.core.exceptions.NotUniquePhoneException;
 import ar.com.gbem.istea.estacionamientos.core.exceptions.UserNotFoundException;
 import ar.com.gbem.istea.estacionamientos.core.services.UserService;
+import ar.com.gbem.istea.estacionamientos.web.Constants;
 import ar.gob.gbem.istea.estacionamientos.dtos.UserDataDTO;
 import ar.gob.gbem.istea.estacionamientos.dtos.UserResultDTO;
 
@@ -25,7 +26,7 @@ public class SessionController {
 
 	@RequestMapping(value = "/signin", method = RequestMethod.GET)
 	public ResponseEntity<UserResultDTO> getUserData(HttpSession session) {
-		String subject = (String) session.getAttribute("subject");
+		String subject = (String) session.getAttribute(Constants.SUBJECT);
 		try {
 			UserResultDTO user = userService.findByToken(subject);
 			return new ResponseEntity<>(user, HttpStatus.OK);
@@ -36,7 +37,7 @@ public class SessionController {
 
 	@RequestMapping(value = "/signup", method = RequestMethod.POST)
 	public ResponseEntity<UserResultDTO> signUp(HttpSession session, @RequestBody(required = true) UserDataDTO dto) {
-		String subject = (String) session.getAttribute("subject");
+		String subject = (String) session.getAttribute(Constants.SUBJECT);
 		UserResultDTO user = null;
 		try {
 			user = userService.findByToken(subject);

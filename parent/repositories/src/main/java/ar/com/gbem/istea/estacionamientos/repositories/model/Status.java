@@ -1,11 +1,11 @@
 package ar.com.gbem.istea.estacionamientos.repositories.model;
 
 public enum Status {
-	PENDING(1, "Pending"), 
-	APPROVED(2, "Approved"), 
-	IN_PROGRESS(3, "In Progress"), 
-	DONE(4, "Done"), 
-	CANCELLED(5, "Cancelled");
+	PENDING(0, "Pending"), 
+	APPROVED(1, "Approved"), 
+	IN_PROGRESS(2, "In Progress"), 
+	DONE(3, "Done"), 
+	CANCELLED(4, "Cancelled");
 
 	private int key;
 	private String description;
