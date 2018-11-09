@@ -60,8 +60,9 @@ public class VehicleService {
 		User user = u.orElseThrow(UserNotFoundException::new);
 
 		Vehicle newVehicle = mapper.map(vehicleData, Vehicle.class);
-
+		newVehicle.setUser(user);
 		user.getVehicles().add(newVehicle);
+		
 	}
 
 	@Transactional

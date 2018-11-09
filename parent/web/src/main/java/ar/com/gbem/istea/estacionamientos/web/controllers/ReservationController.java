@@ -49,9 +49,25 @@ public class ReservationController {
 	@RequestMapping(value = "/driver/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> cancelCurrentReservation(HttpSession session, @PathVariable("id") Long id) {
 		if (id == null) {
-			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<Void>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/lender/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Void> rejectOrCancelLenderReservation(HttpSession session, @PathVariable("id") Long id) {
+		if (id == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/lender/{id}", method = RequestMethod.POST)
+	public ResponseEntity<Void> acceptLenderReservation(HttpSession session, @PathVariable("id") Long id) {
+		if (id == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/lender", method = RequestMethod.GET)
@@ -66,19 +82,4 @@ public class ReservationController {
 		return new ResponseEntity<>(reservations, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/lender/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Void> rejectOrCancelLenderReservation(HttpSession session, @PathVariable("id") Long id) {
-		if (id == null) {
-			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
-		}
-		return new ResponseEntity<Void>(HttpStatus.OK);
-	}
-
-	@RequestMapping(value = "/lender/{id}", method = RequestMethod.POST)
-	public ResponseEntity<Void> acceptLenderReservation(HttpSession session, @PathVariable("id") Long id) {
-		if (id == null) {
-			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
-		}
-		return new ResponseEntity<Void>(HttpStatus.OK);
-	}
 }

@@ -1,5 +1,6 @@
 package ar.com.gbem.istea.estacionamientos.repositories.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class User {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Vehicle> vehicles;
 
-	@JoinColumn(name = "ID")
+	@JoinColumn(name = "USER")
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ParkingLot> parkingLots;
 
@@ -129,6 +130,9 @@ public class User {
 	}
 
 	public List<Vehicle> getVehicles() {
+		if (vehicles == null) {
+			vehicles = new ArrayList<>();
+		}
 		return vehicles;
 	}
 
@@ -137,6 +141,10 @@ public class User {
 	}
 
 	public List<ParkingLot> getParkingLots() {
+		if (parkingLots == null) {
+			parkingLots = new ArrayList<>();
+		}
+		
 		return parkingLots;
 	}
 

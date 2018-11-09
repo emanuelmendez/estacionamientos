@@ -1,9 +1,12 @@
 package ar.com.gbem.istea.estacionamientos.repositories.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -24,6 +27,18 @@ public class Vehicle {
 	
 	private String color;
 	
+	@JoinColumn(name = "USER")
+	@ManyToOne(fetch = FetchType.LAZY)
+	private User user;
+	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	public long getId() {
 		return id;
 	}
