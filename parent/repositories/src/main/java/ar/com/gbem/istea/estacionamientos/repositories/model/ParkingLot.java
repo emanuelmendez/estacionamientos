@@ -1,5 +1,6 @@
 package ar.com.gbem.istea.estacionamientos.repositories.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -16,7 +17,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "PARKING_LOT")
-public class ParkingLot implements Comparable<ParkingLot> {
+public class ParkingLot implements Serializable, Comparable<ParkingLot> {
+
+	private static final long serialVersionUID = 8663354777354192674L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +28,7 @@ public class ParkingLot implements Comparable<ParkingLot> {
 	@Column(name = "LOT_NUMBER")
 	private int lotNumber;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "ADDRESS")
 	private Address address;
 
@@ -38,7 +41,10 @@ public class ParkingLot implements Comparable<ParkingLot> {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USER")
 	private User user;
-	
+
+	@OneToOne(fetch = FetchType.LAZY, mappedBy = "parkingLot", cascade = CascadeType.ALL)
+	private Schedule schedule;
+
 	public long getId() {
 		return id;
 	}
@@ -93,6 +99,14 @@ public class ParkingLot implements Comparable<ParkingLot> {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public Schedule getSchedule() {
+		return schedule;
+	}
+
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
 	}
 
 	@Override

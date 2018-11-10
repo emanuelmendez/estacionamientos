@@ -19,6 +19,7 @@ import ar.com.gbem.istea.estacionamientos.repositories.UserRepository;
 import ar.com.gbem.istea.estacionamientos.repositories.model.Address;
 import ar.com.gbem.istea.estacionamientos.repositories.model.ParkingLot;
 import ar.com.gbem.istea.estacionamientos.repositories.model.Reservation;
+import ar.com.gbem.istea.estacionamientos.repositories.model.Schedule;
 import ar.com.gbem.istea.estacionamientos.repositories.model.Status;
 import ar.com.gbem.istea.estacionamientos.repositories.model.User;
 import ar.com.gbem.istea.estacionamientos.repositories.model.Vehicle;
@@ -79,13 +80,9 @@ public class UserService {
 	}
 
 	@Transactional
-	public String generateTestData(
-			String mail, 
-			String streetAdress, 
-			double longitude, 
-			double latitude, 
-			Date from,
+	public String generateTestData(String mail, String streetAdress, double longitude, double latitude, Date from,
 			Date to) {
+
 		long count = userRepo.count();
 		User u = new User();
 		u.setActive(true);
@@ -98,7 +95,7 @@ public class UserService {
 		double d = Math.random() * count * 12345600;
 		u.setPhone(String.valueOf(d));
 		u.setToken(String.valueOf(Math.rint(Math.random() * 23 * 31 + count)));
-		
+
 		Vehicle v = new Vehicle();
 		v.setActive(true);
 		v.setBrand("B" + mail.substring(0, 3));
@@ -107,13 +104,26 @@ public class UserService {
 		v.setPlate(count + " " + RandomUtils.nextInt(1, 99999));
 		u.getVehicles().add(v);
 		v.setUser(u);
-		
+
 		ParkingLot p = new ParkingLot();
 		p.setActive(true);
 		p.setDescription("Casa n " + count);
 		p.setLotNumber(0);
 		p.setSince(new Date());
-		
+
+		Schedule schedule = new Schedule();
+		schedule.setMonday(true);
+		schedule.setTuesday(true);
+		schedule.setWednesday(false);
+		schedule.setThursday(false);
+		schedule.setFriday(true);
+		schedule.setSaturday(false);
+		schedule.setSunday(false);
+		schedule.setFromHour(9);
+		schedule.setToHour(18);
+		schedule.setParkingLot(p);
+		p.setSchedule(schedule);
+
 		Address a = new Address();
 		a.setCity("Ciudad de Buenos Aires");
 		a.setCountry("Argentina");
@@ -142,7 +152,7 @@ public class UserService {
 
 		User saved = userRepo.save(u);
 		reservationsRepo.save(r);
-		
+
 		return saved.getToken();
 	}
 
