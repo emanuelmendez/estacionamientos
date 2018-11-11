@@ -2,6 +2,7 @@ package ar.com.gbem.istea.estacionamientos.core.services;
 
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.com.gbem.istea.estacionamientos.core.DozerUtil;
 import ar.com.gbem.istea.estacionamientos.repositories.ReservationsRepo;
+import ar.com.gbem.istea.estacionamientos.repositories.model.ParkingLotSolr;
 import ar.com.gbem.istea.estacionamientos.repositories.model.Reservation;
 import ar.com.gbem.istea.estacionamientos.repositories.model.Status;
 import ar.gob.gbem.istea.estacionamientos.dtos.ReservationDTO;
+import ar.gob.gbem.istea.estacionamientos.dtos.SearchDTO;
 
 @Service
 public class ReservationsService {
@@ -45,6 +48,16 @@ public class ReservationsService {
 	public List<ReservationDTO> getOfLenderBySubject(String subject) {
 		List<Reservation> reservations = reservationsRepo.getOfLenderBySubject(subject, ACTIVE_STATUS);
 		return mapper.getReservationsFrom(reservations);
+	}
+
+	public void retainByAvailability(List<ParkingLotSolr> results, SearchDTO dto) {
+		for (Iterator<ParkingLotSolr> it = results.iterator(); it.hasNext();) {
+			ParkingLotSolr parkingLot = it.next();
+			if (reservationsRepo.findOccupancy(parkingLot.getId(), dto.getFromDate(), dto.getToDate(),
+					ACTIVE_STATUS) > 0) {
+				it.remove();
+			}
+		}
 	}
 
 }

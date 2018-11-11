@@ -30,6 +30,105 @@ public class ParkingLotSolr {
 	@Field("user_id")
 	private long userId;
 
+	@Field
+	private boolean monday;
+
+	@Field
+	private boolean tuesday;
+
+	@Field
+	private boolean wednesday;
+
+	@Field
+	private boolean thursday;
+
+	@Field
+	private boolean friday;
+
+	@Field
+	private boolean saturday;
+
+	@Field
+	private boolean sunday;
+
+	@Field("from_hour")
+	private int fromHour;
+
+	@Field("to_hour")
+	private int toHour;
+
+	public boolean isMonday() {
+		return monday;
+	}
+
+	public void setMonday(boolean monday) {
+		this.monday = monday;
+	}
+
+	public boolean isTuesday() {
+		return tuesday;
+	}
+
+	public void setTuesday(boolean tuesday) {
+		this.tuesday = tuesday;
+	}
+
+	public boolean isWednesday() {
+		return wednesday;
+	}
+
+	public void setWednesday(boolean wednesday) {
+		this.wednesday = wednesday;
+	}
+
+	public boolean isThursday() {
+		return thursday;
+	}
+
+	public void setThursday(boolean thursday) {
+		this.thursday = thursday;
+	}
+
+	public boolean isFriday() {
+		return friday;
+	}
+
+	public void setFriday(boolean friday) {
+		this.friday = friday;
+	}
+
+	public boolean isSaturday() {
+		return saturday;
+	}
+
+	public void setSaturday(boolean saturday) {
+		this.saturday = saturday;
+	}
+
+	public boolean isSunday() {
+		return sunday;
+	}
+
+	public void setSunday(boolean sunday) {
+		this.sunday = sunday;
+	}
+
+	public int getFromHour() {
+		return fromHour;
+	}
+
+	public void setFromHour(int fromHour) {
+		this.fromHour = fromHour;
+	}
+
+	public int getToHour() {
+		return toHour;
+	}
+
+	public void setToHour(int toHour) {
+		this.toHour = toHour;
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -84,6 +183,28 @@ public class ParkingLotSolr {
 
 	public void setUserId(long userId) {
 		this.userId = userId;
+	}
+
+	
+	public boolean potentialDay(int day) {
+		switch (day) {
+		case 1:
+			return monday;
+		case 2:
+			return tuesday;
+		case 3:
+			return wednesday;
+		case 4:
+			return thursday;
+		case 5:
+			return friday;
+		case 6:
+			return saturday;
+		case 7:
+			return sunday;
+		default:
+			return false;
+		}
 	}
 
 	@Override

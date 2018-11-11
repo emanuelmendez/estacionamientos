@@ -9,10 +9,20 @@ CONCAT(a.LATITUDE, ',', a.LONGITUDE) as COORDINATES,
 a.id as ADDRESS_ID,
 p.LOT_NUMBER as LOT_NUMBER,
 a.STREET_ADDRESS as STREET_ADDRESS,
-u.ID as USER_ID
+u.ID as USER_ID,
+s.MONDAY as MONDAY,
+s.TUESDAY as TUESDAY,
+s.WEDNESDAY as WEDNESDAY,
+s.THURSDAY as THURSDAY,
+s.FRIDAY as FRIDAY,
+s.SATURDAY as SATURDAY,
+s.SUNDAY as SUNDAY,
+s.FROM_HOUR as FROM_HOUR,
+s.TO_HOUR as TO_HOUR
 FROM est_db.PARKING_LOT p
 LEFT JOIN est_db.USER u ON p.user = u.id
 LEFT JOIN est_db.ADDRESS a ON p.address = a.id
+LEFT JOIN est_db.SCHEDULES s ON p.ID = s.parking_lot
 WHERE u.active = 1 and p.active = 1;
 ">
 		<field column="ID" name="id" />            
@@ -22,6 +32,15 @@ WHERE u.active = 1 and p.active = 1;
 		<field column="LOT_NUMBER" name="lot_number" />
 		<field column="STREET_ADDRESS" name="street_address" />
 		<field column="USER_ID" name="user_id" />
+		<field column="MONDAY" name="monday" />
+		<field column="TUESDAY" name="tuesday" />
+		<field column="WEDNESDAY" name="wednesday" />
+		<field column="THURSDAY" name="thursday" />
+		<field column="FRIDAY" name="friday" />
+		<field column="SATURDAY" name="saturday" />
+		<field column="SUNDAY" name="sunday" />
+		<field column="FROM_HOUR" name="from_hour" />
+		<field column="TO_HOUR" name="to_hour" />
         </entity>
     </document>
 </dataConfig>

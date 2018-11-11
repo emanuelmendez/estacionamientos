@@ -1,5 +1,6 @@
 package ar.com.gbem.istea.estacionamientos.web.controllers;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ar.com.gbem.istea.estacionamientos.core.services.SolrService;
 import ar.gob.gbem.istea.estacionamientos.dtos.ParkingLotResultDTO;
+import ar.gob.gbem.istea.estacionamientos.dtos.SearchDTO;
 
 @RestController
 public class DistanceSearchController {
@@ -20,9 +22,18 @@ public class DistanceSearchController {
 
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
 	public @ResponseBody List<ParkingLotResultDTO> search(@RequestParam(required = true) double latitude,
-			@RequestParam(required = true) double longitude, @RequestParam(required = true) double ratio) {
+			@RequestParam(required = true) double longitude, @RequestParam(required = true) double ratio,
+			@RequestParam(required = true, name = "from_date") Date fromDate,
+			@RequestParam(required = true, name = "to_date") Date toDate) {
 
-		return solrService.findByDistance(latitude, longitude, ratio);
+		final SearchDTO dto = new SearchDTO();
+		dto.setLatitude(latitude);
+		dto.setLongitude(longitude);
+		dto.setRatio(ratio);
+		dto.setFromDate(fromDate);
+		dto.setToDate(toDate);
+
+		return solrService.findByDistance(dto);
 	}
 
 }

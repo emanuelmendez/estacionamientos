@@ -1,0 +1,126 @@
+package ar.com.gbem.istea.estacionamientos.repositories.model;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "SCHEDULES")
+public class Schedule implements Serializable {
+
+	private static final long serialVersionUID = -2850430871482879690L;
+
+	@Id
+	@OneToOne
+	@JoinColumn(name = "PARKING_LOT")
+	private ParkingLot parkingLot;
+
+	private boolean monday;
+	private boolean tuesday;
+	private boolean wednesday;
+	private boolean thursday;
+	private boolean friday;
+	private boolean saturday;
+	private boolean sunday;
+
+	@Column(name = "FROM_HOUR")
+	private int fromHour;
+
+	@Column(name = "TO_HOUR")
+	private int toHour;
+
+	public ParkingLot getParkingLot() {
+		return parkingLot;
+	}
+
+	public void setParkingLot(ParkingLot parkingLot) {
+		this.parkingLot = parkingLot;
+	}
+
+	public boolean isMonday() {
+		return monday;
+	}
+
+	public void setMonday(boolean monday) {
+		this.monday = monday;
+	}
+
+	public boolean isTuesday() {
+		return tuesday;
+	}
+
+	public void setTuesday(boolean tuesday) {
+		this.tuesday = tuesday;
+	}
+
+	public boolean isWednesday() {
+		return wednesday;
+	}
+
+	public void setWednesday(boolean wednesday) {
+		this.wednesday = wednesday;
+	}
+
+	public boolean isThursday() {
+		return thursday;
+	}
+
+	public void setThursday(boolean thursday) {
+		this.thursday = thursday;
+	}
+
+	public boolean isFriday() {
+		return friday;
+	}
+
+	public void setFriday(boolean friday) {
+		this.friday = friday;
+	}
+
+	public boolean isSaturday() {
+		return saturday;
+	}
+
+	public void setSaturday(boolean saturday) {
+		this.saturday = saturday;
+	}
+
+	public boolean isSunday() {
+		return sunday;
+	}
+
+	public void setSunday(boolean sunday) {
+		this.sunday = sunday;
+	}
+
+	public int getFromHour() {
+		return fromHour;
+	}
+
+	public void setFromHour(int fromHour) {
+		this.fromHour = fromHour;
+	}
+
+	public int getToHour() {
+		return toHour;
+	}
+
+	public void setToHour(int toHour) {
+		this.toHour = toHour;
+	}
+
+	@Override
+	public String toString() {
+		return "Schedule [monday=" + monday + ", tuesday=" + tuesday + ", wednesday=" + wednesday + ", thursday="
+				+ thursday + ", friday=" + friday + ", saturday=" + saturday + ", sunday=" + sunday + ", fromHour="
+				+ fromHour + ", toHour=" + toHour + "]";
+	}
+	
+	
+
+}
