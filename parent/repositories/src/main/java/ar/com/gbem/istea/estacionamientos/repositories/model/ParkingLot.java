@@ -1,6 +1,7 @@
 package ar.com.gbem.istea.estacionamientos.repositories.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -44,6 +45,9 @@ public class ParkingLot implements Serializable, Comparable<ParkingLot> {
 
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "parkingLot", cascade = CascadeType.ALL)
 	private Schedule schedule;
+
+	@Column(name = "value", precision = 8, scale = 2)
+	private BigDecimal value;
 
 	public long getId() {
 		return id;
@@ -107,6 +111,14 @@ public class ParkingLot implements Serializable, Comparable<ParkingLot> {
 
 	public void setSchedule(Schedule schedule) {
 		this.schedule = schedule;
+	}
+
+	public BigDecimal getValue() {
+		return value;
+	}
+
+	public void setValue(BigDecimal value) {
+		this.value = value;
 	}
 
 	@Override
