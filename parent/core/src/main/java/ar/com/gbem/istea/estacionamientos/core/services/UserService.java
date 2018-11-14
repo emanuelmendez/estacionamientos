@@ -141,7 +141,7 @@ public class UserService {
 
 		Reservation r = new Reservation();
 		r.setDriver(u);
-		User lender = userRepo.findById(1L).get();
+		User lender = userRepo.findById(1L).orElseThrow(IllegalArgumentException::new);
 		r.setLender(lender);
 		r.setParkingLot(lender.getParkingLots().get(0));
 		r.setFrom(from);

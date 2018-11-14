@@ -1,5 +1,7 @@
 package ar.com.gbem.istea.estacionamientos.repositories.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +11,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "ADDRESS")
-public class Address {
+public class Address implements Serializable {
+
+	private static final long serialVersionUID = -544108442236991646L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
