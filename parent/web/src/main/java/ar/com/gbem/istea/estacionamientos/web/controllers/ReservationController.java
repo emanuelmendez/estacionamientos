@@ -119,4 +119,15 @@ public class ReservationController {
 		return new ResponseEntity<>(reservations, HttpStatus.OK);
 	}
 
+	@RequestMapping(value = "/lender/pending", method = RequestMethod.GET)
+	public ResponseEntity<List<ReservationDTO>> getPendingtByLenderUser(HttpSession session) {
+		String subject = (String) session.getAttribute(Constants.SUBJECT);
+
+		List<ReservationDTO> reservations = reservationsService.getPendingOfLenderBySubject(subject);
+		if (reservations.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+
+		return new ResponseEntity<>(reservations, HttpStatus.OK);
+	}
 }

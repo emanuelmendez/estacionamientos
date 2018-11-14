@@ -132,4 +132,10 @@ public class ReservationsService {
 
 	}
 
+	@Transactional(readOnly = true)
+	public List<ReservationDTO> getPendingOfLenderBySubject(String subject) {
+		List<Reservation> reservations = reservationsRepo.getOfLenderBySubject(subject, EnumSet.of(Status.PENDING));
+		return mapper.getReservationsFrom(reservations);
+	}
+
 }
