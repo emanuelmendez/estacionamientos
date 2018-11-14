@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.com.gbem.istea.estacionamientos.core.exceptions.ReservationConflictException;
+import ar.com.gbem.istea.estacionamientos.core.exceptions.ReservationNotCancellableException;
+import ar.com.gbem.istea.estacionamientos.core.exceptions.ReservationNotConfirmableException;
 import ar.com.gbem.istea.estacionamientos.core.services.ReservationsService;
 import ar.com.gbem.istea.estacionamientos.web.Constants;
 import ar.gob.gbem.istea.estacionamientos.dtos.ReservationDTO;
@@ -69,6 +71,14 @@ public class ReservationController {
 		if (id == null) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
+
+		try {
+			reservationsService.cancelCurrentReservation(id.longValue());
+		} catch (ReservationNotCancellableException e) {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
@@ -85,6 +95,15 @@ public class ReservationController {
 		if (id == null) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
+
+		try {
+			reservationsService.confirmReservation(id.longValue());
+		} catch (ReservationNotConfirmableException e) {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 

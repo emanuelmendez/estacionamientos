@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.com.gbem.istea.estacionamientos.core.DozerUtil;
 import ar.com.gbem.istea.estacionamientos.core.exceptions.ReservationConflictException;
+import ar.com.gbem.istea.estacionamientos.core.exceptions.ReservationNotCancellableException;
+import ar.com.gbem.istea.estacionamientos.core.exceptions.ReservationNotConfirmableException;
 import ar.com.gbem.istea.estacionamientos.repositories.ParkingLotsRepo;
 import ar.com.gbem.istea.estacionamientos.repositories.ReservationsRepo;
 import ar.com.gbem.istea.estacionamientos.repositories.UserRepository;
@@ -97,6 +99,37 @@ public class ReservationsService {
 		r.setValue(parkingLot.getValue());
 
 		reservationsRepo.save(r);
+	}
+
+	@Transactional
+	public void cancelCurrentReservation(long id) throws ReservationNotCancellableException {
+		Reservation r = reservationsRepo.findById(id).orElseThrow(IllegalArgumentException::new);
+
+		// TODO columna de modificacion
+		if (ACTIVE_STATUS.contains(r.getStatus())) {
+			r.setStatus(Status.CANCELLED);
+			reservationsRepo.save(r);
+		} else {
+			throw new ReservationNotCancellableException("Reservation has status: " + r.getStatus().description());
+		}
+	}
+
+	@Transactional
+	public void confirmReservation(long id) throws ReservationNotConfirmableException {
+		Reservation r = reservationsRepo.findById(id).orElseThrow(IllegalArgumentException::new);
+
+		if (!Status.PENDING.equals(r.getStatus())) {
+			throw new ReservationNotConfirmableException("Reservation has status: " + r.getStatus().description());
+		} else if (reservationsRepo.findOccupancy(id, r.getFrom(), r.getTo(), ACTIVE_STATUS) == 0) {
+			r.setStatus(Status.CANCELLED);
+			reservationsRepo.save(r);
+			throw new ReservationNotConfirmableException(
+					"Parking lot isn't available now. Reservation cancelled, id: " + id);
+		} else {
+			r.setStatus(Status.APPROVED);
+			reservationsRepo.save(r);
+		}
+
 	}
 
 }
