@@ -15,6 +15,7 @@ import ar.com.gbem.istea.estacionamientos.repositories.model.Status;
 @Repository
 public interface ReservationsRepo extends CrudRepository<Reservation, Long> {
 
+	@SuppressWarnings("all")
 	Reservation findFirstByDriver_TokenAndStatusInAndToAfterOrderByFrom(String subject, EnumSet<Status> activeStatus,
 			Date since);
 
