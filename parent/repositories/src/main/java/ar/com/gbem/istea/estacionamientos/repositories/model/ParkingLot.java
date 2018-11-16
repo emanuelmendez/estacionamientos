@@ -43,7 +43,7 @@ public class ParkingLot implements Serializable, Comparable<ParkingLot> {
 	@JoinColumn(name = "USER")
 	private User user;
 
-	@OneToOne(fetch = FetchType.LAZY, mappedBy = "parkingLot", cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY, mappedBy = "parkingLot", cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
 	private Schedule schedule;
 
 	@Column(name = "value", precision = 8, scale = 2)
