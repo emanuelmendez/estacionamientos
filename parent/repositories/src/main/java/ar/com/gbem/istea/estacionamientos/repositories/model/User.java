@@ -52,6 +52,9 @@ public class User implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ParkingLot> parkingLots;
 
+	@Column(name = "device_token")
+	private String deviceToken;
+
 	public long getId() {
 		return id;
 	}
@@ -147,12 +150,20 @@ public class User implements Serializable {
 		if (parkingLots == null) {
 			parkingLots = new ArrayList<>();
 		}
-		
+
 		return parkingLots;
 	}
 
 	public void setParkingLots(List<ParkingLot> parkingLots) {
 		this.parkingLots = parkingLots;
+	}
+
+	public void setDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
+	}
+
+	public String getDeviceToken() {
+		return deviceToken;
 	}
 
 	@Override

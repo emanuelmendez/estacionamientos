@@ -156,4 +156,11 @@ public class UserService {
 		return saved.getToken();
 	}
 
+	@Transactional
+	public void updateDeviceToken(String subject, String deviceToken) {
+		User u = userRepo.getByToken(subject);
+		u.setDeviceToken(deviceToken);
+		userRepo.save(u);
+	}
+
 }

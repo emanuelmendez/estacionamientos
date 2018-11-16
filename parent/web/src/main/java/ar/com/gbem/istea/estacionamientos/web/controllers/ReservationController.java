@@ -87,6 +87,15 @@ public class ReservationController {
 		if (id == null) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
+
+		try {
+			reservationsService.cancelCurrentReservation(id);
+		} catch (ReservationNotCancellableException e) {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 

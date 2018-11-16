@@ -39,6 +39,9 @@ public class ReservationsService {
 	private UserRepository userRepo;
 
 	@Autowired
+	private NotificationService notificationService;
+
+	@Autowired
 	private DozerUtil mapper;
 
 	private static final EnumSet<Status> ACTIVE_STATUS = EnumSet.of(Status.IN_PROGRESS, Status.APPROVED,
@@ -99,6 +102,9 @@ public class ReservationsService {
 		r.setValue(parkingLot.getValue());
 
 		reservationsRepo.save(r);
+
+		notificationService.send("Nueva solicitud pendiente",
+				String.format("¡%s está esperando que le confirmes!", driver.getName()), r.getLender().getDeviceToken());
 	}
 
 	@Transactional
@@ -109,6 +115,7 @@ public class ReservationsService {
 		if (ACTIVE_STATUS.contains(r.getStatus())) {
 			r.setStatus(Status.CANCELLED);
 			reservationsRepo.save(r);
+			notificationService.send("Se canceló tu reserva", "", r.getDriver().getDeviceToken());
 		} else {
 			throw new ReservationNotCancellableException("Reservation has status: " + r.getStatus().description());
 		}
@@ -123,6 +130,7 @@ public class ReservationsService {
 		} else if (reservationsRepo.findOccupancy(id, r.getFrom(), r.getTo(), ACTIVE_STATUS) == 0) {
 			r.setStatus(Status.CANCELLED);
 			reservationsRepo.save(r);
+			notificationService.send("Se canceló tu reserva", "", r.getDriver().getDeviceToken());
 			throw new ReservationNotConfirmableException(
 					"Parking lot isn't available now. Reservation cancelled, id: " + id);
 		} else {

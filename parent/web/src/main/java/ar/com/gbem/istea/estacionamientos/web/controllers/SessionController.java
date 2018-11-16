@@ -35,6 +35,17 @@ public class SessionController {
 		}
 	}
 
+	@RequestMapping(value = "/device", method = RequestMethod.POST)
+	public ResponseEntity<Void> updateDeviceToken(HttpSession session, @RequestBody String deviceToken) {
+		try {
+			userService.updateDeviceToken(session.getAttribute(Constants.SUBJECT).toString(), 
+					deviceToken.substring(1, deviceToken.length() - 2));
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
 	@RequestMapping(value = "/signup", method = RequestMethod.POST)
 	public ResponseEntity<UserResultDTO> signUp(HttpSession session, @RequestBody(required = true) UserDataDTO dto) {
 		String subject = (String) session.getAttribute(Constants.SUBJECT);
