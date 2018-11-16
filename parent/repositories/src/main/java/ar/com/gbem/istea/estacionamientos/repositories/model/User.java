@@ -1,5 +1,6 @@
 package ar.com.gbem.istea.estacionamientos.repositories.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,7 +17,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "USER")
-public class User {
+public class User implements Serializable {
+
+	private static final long serialVersionUID = -603876671572630859L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,6 +51,9 @@ public class User {
 	@JoinColumn(name = "USER")
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ParkingLot> parkingLots;
+
+	@Column(name = "device_token")
+	private String deviceToken;
 
 	public long getId() {
 		return id;
@@ -144,12 +150,20 @@ public class User {
 		if (parkingLots == null) {
 			parkingLots = new ArrayList<>();
 		}
-		
+
 		return parkingLots;
 	}
 
 	public void setParkingLots(List<ParkingLot> parkingLots) {
 		this.parkingLots = parkingLots;
+	}
+
+	public void setDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
+	}
+
+	public String getDeviceToken() {
+		return deviceToken;
 	}
 
 	@Override

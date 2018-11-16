@@ -141,7 +141,7 @@ public class UserService {
 
 		Reservation r = new Reservation();
 		r.setDriver(u);
-		User lender = userRepo.findById(1L).get();
+		User lender = userRepo.findById(1L).orElseThrow(IllegalArgumentException::new);
 		r.setLender(lender);
 		r.setParkingLot(lender.getParkingLots().get(0));
 		r.setFrom(from);
@@ -154,6 +154,13 @@ public class UserService {
 		reservationsRepo.save(r);
 
 		return saved.getToken();
+	}
+
+	@Transactional
+	public void updateDeviceToken(String subject, String deviceToken) {
+		User u = userRepo.getByToken(subject);
+		u.setDeviceToken(deviceToken);
+		userRepo.save(u);
 	}
 
 }

@@ -7,12 +7,15 @@ import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import ar.com.gbem.istea.estacionamientos.repositories.model.Reservation;
 import ar.com.gbem.istea.estacionamientos.repositories.model.Status;
 
+@Repository
 public interface ReservationsRepo extends CrudRepository<Reservation, Long> {
 
+	@SuppressWarnings("all")
 	Reservation findFirstByDriver_TokenAndStatusInAndToAfterOrderByFrom(String subject, EnumSet<Status> activeStatus,
 			Date since);
 

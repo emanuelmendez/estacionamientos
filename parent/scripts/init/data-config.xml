@@ -18,7 +18,9 @@ s.FRIDAY as FRIDAY,
 s.SATURDAY as SATURDAY,
 s.SUNDAY as SUNDAY,
 s.FROM_HOUR as FROM_HOUR,
-s.TO_HOUR as TO_HOUR
+s.TO_HOUR as TO_HOUR,
+CONCAT(u.NAME, ' ',u.SURNAME) as USER_FULL_NAME,
+p.value as VALUE
 FROM est_db.PARKING_LOT p
 LEFT JOIN est_db.USER u ON p.user = u.id
 LEFT JOIN est_db.ADDRESS a ON p.address = a.id
@@ -41,6 +43,8 @@ WHERE u.active = 1 and p.active = 1;
 		<field column="SUNDAY" name="sunday" />
 		<field column="FROM_HOUR" name="from_hour" />
 		<field column="TO_HOUR" name="to_hour" />
+		<field column="USER_FULL_NAME" name="user_full_name" />
+		<field column="VALUE" name="value" />
         </entity>
     </document>
 </dataConfig>

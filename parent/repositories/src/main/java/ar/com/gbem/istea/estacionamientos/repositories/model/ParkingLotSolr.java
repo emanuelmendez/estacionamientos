@@ -57,6 +57,28 @@ public class ParkingLotSolr {
 	@Field("to_hour")
 	private int toHour;
 
+	@Field("user_full_name")
+	private String userFullName;
+
+	@Field
+	private double value;
+
+	public String getUserFullName() {
+		return userFullName;
+	}
+
+	public void setUserFullName(String userFullName) {
+		this.userFullName = userFullName;
+	}
+
+	public double getValue() {
+		return value;
+	}
+
+	public void setValue(double value) {
+		this.value = value;
+	}
+
 	public boolean isMonday() {
 		return monday;
 	}
@@ -185,23 +207,22 @@ public class ParkingLotSolr {
 		this.userId = userId;
 	}
 
-	
 	public boolean potentialDay(int day) {
 		switch (day) {
 		case 1:
-			return monday;
-		case 2:
-			return tuesday;
-		case 3:
-			return wednesday;
-		case 4:
-			return thursday;
-		case 5:
-			return friday;
-		case 6:
-			return saturday;
-		case 7:
 			return sunday;
+		case 2:
+			return monday;
+		case 3:
+			return tuesday;
+		case 4:
+			return wednesday;
+		case 5:
+			return thursday;
+		case 6:
+			return friday;
+		case 7:
+			return saturday;
 		default:
 			return false;
 		}

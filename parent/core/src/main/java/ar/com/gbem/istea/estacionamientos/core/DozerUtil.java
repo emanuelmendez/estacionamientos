@@ -86,7 +86,9 @@ public final class DozerUtil {
 		destination.setCoordinates(Double.toString(source.getAddress().getLatitude()) + ","
 				+ Double.toString(source.getAddress().getLongitude()));
 		destination.setStreetAddress(source.getAddress().getStreetAddress());
-
+		destination.setUserFullName(source.getUser().getName() + " " + source.getUser().getSurname());
+		destination.setValue(source.getValue().doubleValue());		
+		
 		return destination;
 	}
 
