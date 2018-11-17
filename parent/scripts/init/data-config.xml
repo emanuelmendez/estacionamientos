@@ -25,7 +25,12 @@ FROM est_db.PARKING_LOT p
 LEFT JOIN est_db.USER u ON p.user = u.id
 LEFT JOIN est_db.ADDRESS a ON p.address = a.id
 LEFT JOIN est_db.SCHEDULES s ON p.ID = s.parking_lot
-WHERE u.active = 1 and p.active = 1;
+WHERE u.active = 1 and p.active = 1
+and p.id = case when '${dataimporter.request.pl_id}' != '' 
+        then cast('${dataimporter.request.pl_id}' AS UNSIGNED) 
+        else p.id 
+        end
+;
 ">
 		<field column="ID" name="id" />            
 		<field column="DESCRIPTION" name="description" />
