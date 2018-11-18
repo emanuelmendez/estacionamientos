@@ -23,7 +23,7 @@ public interface ReservationsRepo extends CrudRepository<Reservation, Long> {
 	List<Reservation> getOfDriverBySubject(@Param("subject") String subject,
 			@Param("status") EnumSet<Status> activeStatus);
 
-	@Query("from Reservation r where r.lender.token = :subject and r.status in :status order by r.from")
+	@Query("from Reservation r where r.lender.token = :subject and r.status in :status order by r.from desc")
 	List<Reservation> getOfLenderBySubject(@Param("subject") String subject,
 			@Param("status") EnumSet<Status> activeStatus);
 
