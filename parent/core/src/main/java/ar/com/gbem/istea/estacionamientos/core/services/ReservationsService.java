@@ -127,7 +127,7 @@ public class ReservationsService {
 
 		if (!Status.PENDING.equals(r.getStatus())) {
 			throw new ReservationNotConfirmableException("Reservation has status: " + r.getStatus().description());
-		} else if (reservationsRepo.findOccupancy(id, r.getFrom(), r.getTo(), ACTIVE_STATUS) == 0) {
+		} else if (reservationsRepo.findOccupancy(id, r.getFrom(), r.getTo(), ACTIVE_STATUS) > 0) {
 			r.setStatus(Status.CANCELLED);
 			reservationsRepo.save(r);
 			notificationService.send("Se canceló tu reserva", "", r.getDriver().getDeviceToken());
