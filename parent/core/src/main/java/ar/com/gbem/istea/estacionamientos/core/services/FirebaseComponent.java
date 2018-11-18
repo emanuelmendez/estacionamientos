@@ -18,6 +18,8 @@ public class FirebaseComponent {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FirebaseComponent.class);
 
+	private static FirebaseApp APP;
+
 	FirebaseComponent(@Value("${firebase.server.json.path}") String jsonServerKeyPath,
 			@Value("${firebase.app.url}") String firebaseAppUrl) {
 
@@ -34,8 +36,12 @@ public class FirebaseComponent {
 			throw new IllegalStateException();
 		}
 
-		FirebaseApp.initializeApp(
+		APP = FirebaseApp.initializeApp(
 				new FirebaseOptions.Builder().setCredentials(credentials).setDatabaseUrl(firebaseAppUrl).build());
+	}
+
+	public static final FirebaseApp app() {
+		return APP;
 	}
 
 }

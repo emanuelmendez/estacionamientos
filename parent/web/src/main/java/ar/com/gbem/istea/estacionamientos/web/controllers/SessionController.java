@@ -39,7 +39,7 @@ public class SessionController {
 	public ResponseEntity<Void> updateDeviceToken(HttpSession session, @RequestBody String deviceToken) {
 		try {
 			userService.updateDeviceToken(session.getAttribute(Constants.SUBJECT).toString(), 
-					deviceToken.substring(1, deviceToken.length() - 2));
+					deviceToken.substring(1, deviceToken.length() - 1));
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
