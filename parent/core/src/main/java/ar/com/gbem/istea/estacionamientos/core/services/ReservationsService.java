@@ -64,7 +64,7 @@ public class ReservationsService {
 
 	@Transactional(readOnly = true)
 	public List<ReservationDTO> getOfLenderBySubject(String subject) {
-		List<Reservation> reservations = reservationsRepo.getOfLenderBySubject(subject, ACTIVE_STATUS);
+		List<Reservation> reservations = reservationsRepo.getOfLenderBySubject(subject, EnumSet.allOf(Status.class));
 		return mapper.getReservationsFrom(reservations);
 	}
 
@@ -104,7 +104,8 @@ public class ReservationsService {
 		reservationsRepo.save(r);
 
 		notificationService.send("Nueva solicitud pendiente",
-				String.format("¡%s está esperando que le confirmes!", driver.getName()), r.getLender().getDeviceToken());
+				String.format("¡%s está esperando que le confirmes!", driver.getName()),
+				r.getLender().getDeviceToken());
 	}
 
 	@Transactional
