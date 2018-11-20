@@ -20,11 +20,16 @@ s.SUNDAY as SUNDAY,
 s.FROM_HOUR as FROM_HOUR,
 s.TO_HOUR as TO_HOUR,
 CONCAT(u.NAME, ' ',u.SURNAME) as USER_FULL_NAME,
-p.value as VALUE
+p.value as VALUE,
+sq.SCORE as SCORE
 FROM est_db.PARKING_LOT p
 LEFT JOIN est_db.USER u ON p.user = u.id
 LEFT JOIN est_db.ADDRESS a ON p.address = a.id
 LEFT JOIN est_db.SCHEDULES s ON p.ID = s.parking_lot
+LEFT JOIN (
+	SELECT r.LENDER, AVG(c.SCORE) AS SCORE 
+	FROM est_db.RESERVATION r LEFT JOIN est_db.REVIEW c ON r.id = c.RESERVATION GROUP BY r.LENDER
+) sq ON p.USER = sq.LENDER
 WHERE u.active = 1 and p.active = 1
 and p.id = case when '${dataimporter.request.pl_id}' != '' 
         then cast('${dataimporter.request.pl_id}' AS UNSIGNED) 
@@ -50,6 +55,7 @@ and p.id = case when '${dataimporter.request.pl_id}' != ''
 		<field column="TO_HOUR" name="to_hour" />
 		<field column="USER_FULL_NAME" name="user_full_name" />
 		<field column="VALUE" name="value" />
+		<field column="SCORE" name="score" />
         </entity>
     </document>
 </dataConfig>
