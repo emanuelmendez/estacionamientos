@@ -62,6 +62,9 @@ public class ParkingLotSolr {
 
 	@Field
 	private double value;
+	
+	@Field
+	private Double score;
 
 	public String getUserFullName() {
 		return userFullName;
@@ -205,6 +208,14 @@ public class ParkingLotSolr {
 
 	public void setUserId(long userId) {
 		this.userId = userId;
+	}
+	
+	public Double getScore() {
+		return score;
+	}
+
+	public void setScore(Double score) {
+		this.score = score;
 	}
 
 	public boolean potentialDay(int day) {

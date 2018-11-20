@@ -5,11 +5,11 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -17,7 +17,7 @@ import javax.persistence.Table;
 public class Review {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@Enumerated
@@ -28,7 +28,7 @@ public class Review {
 	@Column(name = "DATE_REVIEWED")
 	private Date dateReviewed;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@OneToOne
 	@JoinColumn(name = "RESERVATION")
 	private Reservation reservation;
 
@@ -77,7 +77,6 @@ public class Review {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result + ((reservation == null) ? 0 : reservation.hashCode());
 		return result;
 	}
 
@@ -94,13 +93,6 @@ public class Review {
 		}
 		Review other = (Review) obj;
 		if (id != other.id) {
-			return false;
-		}
-		if (reservation == null) {
-			if (other.reservation != null) {
-				return false;
-			}
-		} else if (!reservation.equals(other.reservation)) {
 			return false;
 		}
 		return true;

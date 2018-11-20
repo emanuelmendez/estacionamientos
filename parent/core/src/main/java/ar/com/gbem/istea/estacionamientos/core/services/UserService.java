@@ -40,6 +40,9 @@ public class UserService {
 	@Autowired
 	private ReservationsRepo reservationsRepo;
 
+	@Autowired
+	private SolrService solrService;
+	
 	public UserResultDTO getUserById(Long id) throws UserNotFoundException {
 		Optional<User> userData = userRepo.findById(id);
 		User u = userData.orElseThrow(UserNotFoundException::new);
@@ -153,6 +156,95 @@ public class UserService {
 		User saved = userRepo.save(u);
 		reservationsRepo.save(r);
 
+		return saved.getToken();
+	}
+	
+	@Transactional
+	public String generateDriver() {
+
+		long count = userRepo.count();
+		User u = new User();
+		u.setActive(true);
+		final String username = "driver_" + count + "@gmail.com";
+		u.setEmail(username);
+		u.setUsername(username);
+		u.setSince(new Date());
+		u.setLastUpdated(new Date());
+		u.setName("Juan");
+		u.setSurname("Pérez");
+		double d = Math.random() * count * 12345600;
+		u.setPhone(String.valueOf(d));
+		u.setToken(String.valueOf(Math.rint(Math.random() * 23 * 31 + count)));
+
+		Vehicle v = new Vehicle();
+		v.setActive(true);
+		v.setBrand("Fiat");
+		v.setColor("Blanco");
+		v.setModel("Duna");
+		v.setPlate("AB 123 CD");
+		u.getVehicles().add(v);
+		v.setUser(u);
+
+		User saved = userRepo.save(u);
+
+		return saved.getToken();
+	}
+	
+	@Transactional
+	public String generateLender(String streetAdress, double longitude, double latitude) {
+
+		long count = userRepo.count();
+		User u = new User();
+		u.setActive(true);
+		final String username = "lender_" + count + "@gmail.com";
+		u.setEmail(username);
+		u.setUsername(username);
+		u.setSince(new Date());
+		u.setLastUpdated(new Date());
+		u.setName("Pablo");
+		u.setSurname("Rodríguez");
+		double d = Math.random() * count * 12345600;
+		u.setPhone(String.valueOf(d));
+		u.setToken(String.valueOf(Math.rint(Math.random() * 23 * 31 + count)));
+
+		ParkingLot p = new ParkingLot();
+		p.setActive(true);
+		p.setDescription("Garage privado");
+		p.setLotNumber(0);
+		p.setSince(new Date());
+		p.setValue(BigDecimal.valueOf(85));
+
+		Schedule schedule = new Schedule();
+		schedule.setMonday(true);
+		schedule.setTuesday(true);
+		schedule.setWednesday(false);
+		schedule.setThursday(false);
+		schedule.setFriday(true);
+		schedule.setSaturday(true);
+		schedule.setSunday(false);
+		schedule.setFromHour(9);
+		schedule.setToHour(18);
+		schedule.setParkingLot(p);
+		p.setSchedule(schedule);
+
+		Address a = new Address();
+		a.setCity("Ciudad de Buenos Aires");
+		a.setCountry("Argentina");
+		a.setNotes("Rejas verdes");
+		a.setPostalCode("C1407EJG");
+		a.setState("Ciudad de Buenos Aires");
+		a.setStreetAddress(streetAdress);
+		a.setLatitude(latitude);
+		a.setLongitude(longitude);
+
+		p.setAddress(a);
+		p.setUser(u);
+		u.getParkingLots().add(p);
+
+		User saved = userRepo.save(u);
+
+		solrService.post(saved.getParkingLots().get(0).getId());
+		
 		return saved.getToken();
 	}
 

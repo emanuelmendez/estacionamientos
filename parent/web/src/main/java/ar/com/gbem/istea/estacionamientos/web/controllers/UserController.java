@@ -44,7 +44,19 @@ public class UserController {
 		return new ResponseEntity<>(userService.generateTestData(dto.getMail(), dto.getStreetAdress(),
 				dto.getLongitude(), dto.getLatitude(), from, to), HttpStatus.CREATED);
 	}
+	
+	@RequestMapping(value = "/test_lender", method = RequestMethod.POST)
+	public ResponseEntity<String> testDataLender(@RequestBody(required = true) TestDataDTO dto) {
 
+		return new ResponseEntity<>(userService.generateLender(dto.getStreetAdress(),
+				dto.getLongitude(), dto.getLatitude()), HttpStatus.CREATED);
+	}
+
+	@RequestMapping(value = "/test_driver", method = RequestMethod.POST)
+	public ResponseEntity<String> testDataDriver() throws ParseException {
+		return new ResponseEntity<>(userService.generateDriver(), HttpStatus.CREATED);
+	}
+	
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
 	public ResponseEntity<TestDataDTO> getTestDataModel() {
 		return new ResponseEntity<>(new TestDataDTO(), HttpStatus.OK);

@@ -65,6 +65,17 @@ public class ReservationController {
 		}
 		return new ResponseEntity<>(reservation, HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "/driver/done", method = RequestMethod.GET)
+	public ResponseEntity<List<ReservationDTO>> getDoneByDriverUser(HttpSession session) {
+		String subject = (String) session.getAttribute(Constants.SUBJECT);
+
+		List<ReservationDTO> reservations = reservationsService.getDoneOfDriverBySubject(subject);
+		if (reservations.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(reservations, HttpStatus.OK);
+	}
 
 	@RequestMapping(value = "/driver/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> cancelCurrentReservation(HttpSession session, @PathVariable("id") Long id) {

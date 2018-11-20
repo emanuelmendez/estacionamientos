@@ -12,6 +12,7 @@
    <field name="user_id" type="plong" indexed="true" stored="true" required="true" multiValued="false" />
    <field name="user_full_name" type="string" indexed="true" stored="true" required="true" multiValued="false" />
    <field name="value" type="pdouble" indexed="true" stored="true" required="true" multiValued="false" />
+   <field name="score" type="pdouble" indexed="true" stored="true" required="false" multiValued="false" />
 
    <field name="monday" type="boolean" indexed="true" stored="true" required="true" multiValued="false" />
    <field name="tuesday" type="boolean" indexed="true" stored="true" required="true" multiValued="false" />
