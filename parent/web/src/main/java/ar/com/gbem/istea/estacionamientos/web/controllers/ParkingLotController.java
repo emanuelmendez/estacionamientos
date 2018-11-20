@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import ar.com.gbem.istea.estacionamientos.core.exceptions.ParkingLotNotFoundException;
 import ar.com.gbem.istea.estacionamientos.core.exceptions.UserNotFoundException;
 import ar.com.gbem.istea.estacionamientos.core.services.ParkingLotService;
 import ar.gob.gbem.istea.estacionamientos.dtos.ParkingLotDTO;
@@ -23,7 +24,7 @@ public class ParkingLotController {
 	private ParkingLotService parkingLotService;
 	
 	@RequestMapping(value = "/{idUser}/parkinglot", method = RequestMethod.GET)
-	public ResponseEntity<List<ParkingLotDTO>> getParkingLotsByUser(@PathVariable long idUser) {
+	public ResponseEntity<List<ParkingLotDTO>> getParkingLotsByUser(@PathVariable long idUser) throws ParkingLotNotFoundException {
 		List<ParkingLotDTO> parkingLots;
 		try {
 			parkingLots = parkingLotService.getParkingLotsByUserId(idUser);
@@ -46,5 +47,17 @@ public class ParkingLotController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
+
+	@RequestMapping(value = "/{id}/parkinglot/{idParkinglot}", method = RequestMethod.PATCH, consumes = {
+	"application/json" })
+	public ResponseEntity<String> editParkingLot(@PathVariable Long id, @PathVariable Long idParkinglot,
+			@RequestBody(required = true) ParkingLotDTO parkingData) {
+		try {
+			parkingLotService.editUserParkingLot(id, idParkinglot, parkingData);
+		} catch (UserNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }
