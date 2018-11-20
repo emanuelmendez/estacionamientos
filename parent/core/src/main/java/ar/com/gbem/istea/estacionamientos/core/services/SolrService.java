@@ -18,7 +18,6 @@ import org.apache.solr.common.util.ContentStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
-import org.springframework.data.solr.core.SolrCallback;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.geo.Point;
 import org.springframework.stereotype.Service;
