@@ -1,5 +1,6 @@
 package ar.com.gbem.istea.estacionamientos.core.services;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -145,6 +146,36 @@ public class ReservationsService {
 	public List<ReservationDTO> getPendingOfLenderBySubject(String subject) {
 		List<Reservation> reservations = reservationsRepo.getOfLenderBySubject(subject, EnumSet.of(Status.PENDING));
 		return mapper.getReservationsFrom(reservations);
+	}
+
+	@Transactional(readOnly = true)
+	public List<ReservationDTO> getDoneOfDriverBySubject(String subject) {
+		List<Reservation> reservations = reservationsRepo.getDoneOfDriverBySubject(subject, EnumSet.of(Status.DONE));
+		if (reservations == null)
+			return Collections.emptyList();
+		else
+			return mapper.getReservationsFrom(reservations);
+	}
+
+	@Transactional
+	public void updateReservationsStatus() {
+		final Date now = new Date();
+		List<Reservation> approved = reservationsRepo
+				.findAllApprovedStarted(EnumSet.of(Status.PENDING, Status.APPROVED), now);
+		for (Reservation reservation : approved) {
+			if (reservation.getStatus().equals(Status.APPROVED)) {
+				reservation.setStatus(Status.IN_PROGRESS);
+			} else {
+				reservation.setStatus(Status.CANCELLED);
+			}
+		}
+		reservationsRepo.saveAll(approved);
+
+		List<Reservation> inProgress = reservationsRepo.findAllInProgressEnded(Status.IN_PROGRESS, now);
+		for (Reservation reservation : inProgress) {
+			reservation.setStatus(Status.DONE);
+		}
+		reservationsRepo.saveAll(inProgress);
 	}
 
 }

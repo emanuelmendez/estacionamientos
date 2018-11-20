@@ -12,6 +12,7 @@ import ar.com.gbem.istea.estacionamientos.repositories.model.ParkingLot;
 import ar.com.gbem.istea.estacionamientos.repositories.model.Reservation;
 import ar.gob.gbem.istea.estacionamientos.dtos.ParkingLotResultDTO;
 import ar.gob.gbem.istea.estacionamientos.dtos.ReservationDTO;
+import ar.gob.gbem.istea.estacionamientos.dtos.ReviewDTO;
 
 /**
  * Bean utilizado para instanciar objetos a partir de los valores de otros
@@ -68,6 +69,10 @@ public final class DozerUtil {
 		destination.setTo(source.getTo());
 		destination.setStatus(source.getStatus().description());
 		destination.setValue(source.getValue().doubleValue());
+		if (source.getReview() != null) {
+			destination.setReview(map(source.getReview(), ReviewDTO.class));
+			destination.getReview().setScore(source.getReview().getScore().value());
+		}
 		return destination;
 	}
 
@@ -87,8 +92,8 @@ public final class DozerUtil {
 				+ Double.toString(source.getAddress().getLongitude()));
 		destination.setStreetAddress(source.getAddress().getStreetAddress());
 		destination.setUserFullName(source.getUser().getName() + " " + source.getUser().getSurname());
-		destination.setValue(source.getValue().doubleValue());		
-		
+		destination.setValue(source.getValue().doubleValue());
+
 		return destination;
 	}
 

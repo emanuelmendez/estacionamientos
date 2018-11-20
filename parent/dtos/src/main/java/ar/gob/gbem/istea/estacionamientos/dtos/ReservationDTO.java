@@ -16,6 +16,7 @@ public class ReservationDTO implements Serializable {
 	private Date to;
 	private double value;
 	private String status;
+	private ReviewDTO review;
 
 	public long getId() {
 		return id;
@@ -87,6 +88,14 @@ public class ReservationDTO implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public ReviewDTO getReview() {
+		return review;
+	}
+
+	public void setReview(ReviewDTO review) {
+		this.review = review;
 	}
 
 }

@@ -3,6 +3,7 @@ package ar.com.gbem.istea.estacionamientos.repositories.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -49,6 +50,9 @@ public class Reservation {
 
 	@Enumerated
 	private Status status;
+
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "reservation")
+	private Review review;
 
 	public long getId() {
 		return id;
@@ -120,6 +124,14 @@ public class Reservation {
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+	public Review getReview() {
+		return review;
+	}
+
+	public void setReview(Review review) {
+		this.review = review;
 	}
 
 	@Override
