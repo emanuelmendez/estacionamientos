@@ -138,6 +138,8 @@ public class ReservationsService {
 		} else {
 			r.setStatus(Status.APPROVED);
 			reservationsRepo.save(r);
+			notificationService.send("Se confirmó tu reserva", r.getLender().getName() + " aprobó tu solicitud",
+					r.getDriver().getDeviceToken());
 		}
 
 	}
@@ -170,11 +172,24 @@ public class ReservationsService {
 			}
 		}
 		reservationsRepo.saveAll(approved);
+		for (Reservation reservation : approved) {
+			notificationService.send("¡Comenzó tu reserva!", "Volvé por tu vehículo más tarde",
+					reservation.getDriver().getDeviceToken());
+			notificationService.send(String.format("Comienza la reserva de %s", reservation.getDriver().getName()),
+					"Te avisaremos si te cancela la reserva", reservation.getLender().getDeviceToken());
+		}
 
 		List<Reservation> inProgress = reservationsRepo.findAllInProgressEnded(Status.IN_PROGRESS, now);
 		for (Reservation reservation : inProgress) {
 			reservation.setStatus(Status.DONE);
 		}
+		for (Reservation reservation : inProgress) {
+			notificationService.send("¡Terminó tu reserva!", "No te olvides de calificar al usuario",
+					reservation.getDriver().getDeviceToken());
+			notificationService.send(String.format("Fin de la reserva de %s", reservation.getDriver().getName()),
+					"Ganaste $" + reservation.getValue().doubleValue(), reservation.getLender().getDeviceToken());
+		}
+
 		reservationsRepo.saveAll(inProgress);
 	}
 
