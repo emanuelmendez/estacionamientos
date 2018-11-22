@@ -30,7 +30,7 @@ public class QuartzConfiguration {
 		job.getJobDataMap().put("reservationsService", reservationsService);
 
 		Trigger trigger = newTrigger().startNow()
-				.withSchedule(simpleSchedule().withIntervalInMinutes(5).repeatForever()).build();
+				.withSchedule(simpleSchedule().withIntervalInMinutes(1).repeatForever()).build();
 
 		scheduler.scheduleJob(job, trigger);
 	}
