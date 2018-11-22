@@ -2,7 +2,6 @@ package ar.com.gbem.istea.estacionamientos.core.services;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ar.com.gbem.istea.estacionamientos.core.DozerUtil;
 import ar.com.gbem.istea.estacionamientos.core.exceptions.UserNotFoundException;
 import ar.com.gbem.istea.estacionamientos.core.exceptions.VehicleNotFoundException;
-import ar.com.gbem.istea.estacionamientos.repositories.UserVehicle;
 import ar.com.gbem.istea.estacionamientos.repositories.VehicleRepository;
 import ar.com.gbem.istea.estacionamientos.repositories.model.User;
 import ar.com.gbem.istea.estacionamientos.repositories.model.Vehicle;
+import ar.gob.gbem.istea.estacionamientos.dtos.UserResultDTO;
 import ar.gob.gbem.istea.estacionamientos.dtos.VehicleDTO;
 
 @Service
@@ -29,19 +28,17 @@ public class VehicleService {
 
 	@Autowired
 	private VehicleRepository vehicleRepository;
-
-	public List<VehicleDTO> getVehiclesByUserId(Long id) throws UserNotFoundException {
-		Optional<UserVehicle> optional = vehicleRepository.findAllUserVehicleById(id);
-
-		UserVehicle uv = optional.orElseThrow(UserNotFoundException::new);
-
-		return mapper.map(uv.getVehicles(), VehicleDTO.class);
+	
+	@Transactional(readOnly = true)
+	public List<VehicleDTO> getVehiclescByUserSubject(String subject) {
+		List<Vehicle> vehicles = vehicleRepository.getVehiclesBySubject(subject);
+		return mapper.map(vehicles, VehicleDTO.class);
 	}
 
 	@Transactional
-	public void deleteUserVehicle(long userId, long vehicleId) throws UserNotFoundException, VehicleNotFoundException {
-		Optional<User> u = vehicleRepository.findById(userId);
-		User user = u.orElseThrow(UserNotFoundException::new);
+	public void deleteUserVehicle(UserResultDTO driverDTO, long vehicleId) throws UserNotFoundException, VehicleNotFoundException {
+		
+		User user = vehicleRepository.findById(driverDTO.getId()).orElseThrow(IllegalArgumentException::new);
 
 		for (Iterator<Vehicle> iterator = user.getVehicles().iterator(); iterator.hasNext();) {
 			if (iterator.next().getId() == vehicleId) {
@@ -55,9 +52,9 @@ public class VehicleService {
 	}
 
 	@Transactional
-	public void addUserVehicle(long userId, VehicleDTO vehicleData) throws UserNotFoundException {
-		Optional<User> u = vehicleRepository.findById(userId);
-		User user = u.orElseThrow(UserNotFoundException::new);
+	public void addUserVehicle(UserResultDTO driverDTO, VehicleDTO vehicleData) throws UserNotFoundException {
+		
+		User user = vehicleRepository.findById(driverDTO.getId()).orElseThrow(IllegalArgumentException::new);
 
 		Vehicle newVehicle = mapper.map(vehicleData, Vehicle.class);
 		newVehicle.setUser(user);
@@ -66,11 +63,10 @@ public class VehicleService {
 	}
 
 	@Transactional
-	public void editUserVehicle(long userId, long vehicleId, VehicleDTO vehicleData)
+	public void editUserVehicle(UserResultDTO driverDTO, long vehicleId, VehicleDTO vehicleData)
 			throws UserNotFoundException, VehicleNotFoundException {
-		Optional<User> u = vehicleRepository.findById(userId);
 
-		User user = u.orElseThrow(UserNotFoundException::new);
+		User user = vehicleRepository.findById(driverDTO.getId()).orElseThrow(IllegalArgumentException::new);
 
 		for (Vehicle v : user.getVehicles()) {
 			if (v.getId() == vehicleId) {

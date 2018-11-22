@@ -17,7 +17,6 @@ import ar.com.gbem.istea.estacionamientos.core.exceptions.ParkingLotNotFoundExce
 import ar.com.gbem.istea.estacionamientos.core.exceptions.UserNotFoundException;
 import ar.com.gbem.istea.estacionamientos.repositories.ParkingLotRepo;
 import ar.com.gbem.istea.estacionamientos.repositories.ParkingRepository;
-import ar.com.gbem.istea.estacionamientos.repositories.UserParkingLot;
 import ar.com.gbem.istea.estacionamientos.repositories.model.Address;
 import ar.com.gbem.istea.estacionamientos.repositories.model.ParkingLot;
 import ar.com.gbem.istea.estacionamientos.repositories.model.Schedule;
@@ -25,6 +24,7 @@ import ar.com.gbem.istea.estacionamientos.repositories.model.User;
 import ar.gob.gbem.istea.estacionamientos.dtos.AddressDTO;
 import ar.gob.gbem.istea.estacionamientos.dtos.ParkingLotDTO;
 import ar.gob.gbem.istea.estacionamientos.dtos.ScheduleDTO;
+import ar.gob.gbem.istea.estacionamientos.dtos.UserResultDTO;
 
 @Service
 public class ParkingLotService {
@@ -41,11 +41,10 @@ public class ParkingLotService {
 	@Autowired
 	private ParkingRepository parkingRepository;
 	
-	public List<ParkingLotDTO> getParkingLotsByUserId(Long id) throws UserNotFoundException, ParkingLotNotFoundException {
+	public List<ParkingLotDTO> getParkingLotsByUser(String subject) throws UserNotFoundException, ParkingLotNotFoundException {
 		
-		Optional<UserParkingLot> optional = parkingLotRepo.getAllParkingLotsById(id);
-		UserParkingLot up = optional.orElseThrow(UserNotFoundException::new);
-		List<ParkingLotDTO> list = mapper.map(up.getParkingLots(), ParkingLotDTO.class);
+		List<ParkingLot> plots = parkingLotRepo.getParkingLotsBySubject(subject);
+		List<ParkingLotDTO> list = mapper.map(plots, ParkingLotDTO.class);
 		
 		for (ParkingLotDTO pl : list) {
 			Optional<ParkingLot> parkingLot = parkingRepository.findById(pl.getId());
@@ -62,9 +61,9 @@ public class ParkingLotService {
 	}
 	
 	@Transactional
-	public void addParkingLot(long userId, List<ParkingLotDTO> parkingData) throws UserNotFoundException {
+	public void addParkingLot(String subject, UserResultDTO lender, List<ParkingLotDTO> parkingData) throws UserNotFoundException {
 		//TODO: agregar a solr
-		Optional<User> u = parkingLotRepo.findById(userId);
+		Optional<User> u = parkingLotRepo.findById(lender.getId());
 		User user = u.orElseThrow(UserNotFoundException::new);
 		
 		List<ParkingLot> newParkingLotList = mapper.map(parkingData, ParkingLot.class);
@@ -84,9 +83,7 @@ public class ParkingLotService {
 			}
 			user.getParkingLots().add(pl);
 			
-			Optional<UserParkingLot> optional = parkingLotRepo.getAllParkingLotsById(userId);
-			UserParkingLot up = optional.orElseThrow(UserNotFoundException::new);
-			List<ParkingLot> plList = up.getParkingLots();
+			List<ParkingLot> plList = parkingLotRepo.getParkingLotsBySubject(subject);
 			
 			Schedule schedule = new Schedule();
 			
@@ -108,9 +105,9 @@ public class ParkingLotService {
 	}
 	
 	@Transactional
-	public void editUserParkingLot(long userId, long lotId, ParkingLotDTO parkingData)
+	public void editUserParkingLot(UserResultDTO lender, long lotId, ParkingLotDTO parkingData)
 			throws UserNotFoundException {
-		Optional<User> u = parkingLotRepo.findById(userId);
+		Optional<User> u = parkingLotRepo.findById(lender.getId());
 		User user = u.orElseThrow(UserNotFoundException::new);
 		Schedule schedule = mapper.map(parkingData.getScheduleDTO(), Schedule.class);
 		
