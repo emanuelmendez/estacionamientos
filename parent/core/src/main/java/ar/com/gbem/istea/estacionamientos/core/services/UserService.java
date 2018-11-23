@@ -76,6 +76,7 @@ public class UserService {
 		Date now = new Date();
 		user.setSince(now);
 		user.setLastUpdated(now);
+		user.setDeviceToken(dto.getDeviceToken());
 
 		try {
 			return mapper.map(userRepo.save(user), UserResultDTO.class);

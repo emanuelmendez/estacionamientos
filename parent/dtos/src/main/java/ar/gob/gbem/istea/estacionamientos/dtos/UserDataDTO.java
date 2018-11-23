@@ -13,6 +13,15 @@ public class UserDataDTO implements Serializable {
 	private String surname;
 	private boolean hasVehicles;
 	private boolean hasParkingLots;
+	private String deviceToken;
+
+	public String getDeviceToken() {
+		return deviceToken;
+	}
+
+	public void setDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
+	}
 
 	public String getUsername() {
 		return username;
