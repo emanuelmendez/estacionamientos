@@ -104,4 +104,8 @@ public class SolrService {
 			return new SolrResponseBase();
 		}
 	}
+	
+	public void delete(long parkingLotId) {
+		solrRepo.deleteById(parkingLotId);
+	}
 }
