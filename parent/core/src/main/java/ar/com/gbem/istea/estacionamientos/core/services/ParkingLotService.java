@@ -41,6 +41,9 @@ public class ParkingLotService {
 	@Autowired
 	private ParkingRepository parkingRepository;
 	
+	@Autowired
+	private SolrService solrService;
+	
 	public List<ParkingLotDTO> getParkingLotsByUser(String subject) throws UserNotFoundException, ParkingLotNotFoundException {
 		
 		List<ParkingLot> plots = parkingLotRepo.getParkingLotsBySubject(subject);
@@ -62,7 +65,7 @@ public class ParkingLotService {
 	
 	@Transactional
 	public void addParkingLot(String subject, UserResultDTO lender, List<ParkingLotDTO> parkingData) throws UserNotFoundException {
-		//TODO: agregar a solr
+		
 		Optional<User> u = parkingLotRepo.findById(lender.getId());
 		User user = u.orElseThrow(UserNotFoundException::new);
 		
@@ -98,6 +101,7 @@ public class ParkingLotService {
 				if(pl2.getLotNumber() == pl.getLotNumber()) {
 					schedule.setParkingLot(pl2);
 					pl2.setSchedule(schedule);
+					solrService.post(pl2.getId());
 					break;
 				}
 			}
@@ -128,5 +132,14 @@ public class ParkingLotService {
 				return;
 			}
 		}
+		
+		solrService.post(lotId);
+	}
+	
+	@Transactional
+	public void deleteLotById(long lotId) throws ParkingLotNotFoundException {
+		
+		solrService.delete(lotId);
+		parkingRepository.deleteById(lotId);
 	}
 }
