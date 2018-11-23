@@ -229,5 +229,11 @@ public class ReservationsService {
 		review.setReservation(reservation);
 
 	}
+	
+	@Transactional(readOnly = true)
+	public Float getAverageScoreByLender(String subject) {
+		User lender = userRepo.getByToken(subject);
+		return reservationsRepo.averageScoreByLender(lender.getId());
+	}
 
 }

@@ -156,6 +156,17 @@ public class ReservationController {
 		return new ResponseEntity<>(reservations, HttpStatus.OK);
 	}
 
+	@RequestMapping(value = "/lender/score", method = RequestMethod.GET)
+	public ResponseEntity<Float> getAverageScore(HttpSession session) {
+		String subject = (String) session.getAttribute(Constants.SUBJECT);
+		Float score = reservationsService.getAverageScoreByLender(subject);
+		if (score == null) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		} else {
+			return new ResponseEntity<>(score.floatValue(), HttpStatus.OK);
+		}		
+	}
+
 	@RequestMapping(value = "/driver/history", method = RequestMethod.GET)
 	public ResponseEntity<List<ReservationDTO>> getReservationsHistoryByDriver(HttpSession session) {
 		String subject = (String) session.getAttribute(Constants.SUBJECT);

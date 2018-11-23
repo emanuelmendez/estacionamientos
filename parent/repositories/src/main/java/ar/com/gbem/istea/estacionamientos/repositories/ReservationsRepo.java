@@ -42,4 +42,7 @@ public interface ReservationsRepo extends CrudRepository<Reservation, Long> {
 	@Query("from Reservation r where r.status = :status and :now >= r.to")
 	List<Reservation> findAllInProgressEnded(@Param("status") Status status, @Param("now") Date now);
 
+	@Query(value = "SELECT AVG(c.SCORE)	FROM est_db.RESERVATION r LEFT JOIN est_db.REVIEW c ON r.id = c.RESERVATION where r.LENDER = :lenderId", nativeQuery = true)
+	Float averageScoreByLender(@Param("lenderId") long lenderId);
+
 }
