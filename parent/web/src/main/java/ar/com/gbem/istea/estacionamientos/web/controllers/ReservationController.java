@@ -20,6 +20,7 @@ import ar.com.gbem.istea.estacionamientos.core.services.ReservationsService;
 import ar.com.gbem.istea.estacionamientos.web.Constants;
 import ar.gob.gbem.istea.estacionamientos.dtos.ReservationDTO;
 import ar.gob.gbem.istea.estacionamientos.dtos.ReservationOptionsDTO;
+import ar.gob.gbem.istea.estacionamientos.dtos.ReviewDTO;
 import ar.gob.gbem.istea.estacionamientos.dtos.UserResultDTO;
 
 @RestController
@@ -65,17 +66,6 @@ public class ReservationController {
 		}
 		return new ResponseEntity<>(reservation, HttpStatus.OK);
 	}
-	
-	@RequestMapping(value = "/driver/done", method = RequestMethod.GET)
-	public ResponseEntity<List<ReservationDTO>> getDoneByDriverUser(HttpSession session) {
-		String subject = (String) session.getAttribute(Constants.SUBJECT);
-
-		List<ReservationDTO> reservations = reservationsService.getDoneOfDriverBySubject(subject);
-		if (reservations.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		}
-		return new ResponseEntity<>(reservations, HttpStatus.OK);
-	}
 
 	@RequestMapping(value = "/driver/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> cancelCurrentReservation(HttpSession session, @PathVariable("id") Long id) {
@@ -93,6 +83,21 @@ public class ReservationController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	@RequestMapping(value = "/driver/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<Void> postReview(HttpSession session, @PathVariable("id") Long id,
+			@RequestBody ReviewDTO review) {
+		if (id == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+		try {
+			reservationsService.postReview(id.longValue(), review);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
 	@RequestMapping(value = "/lender/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> rejectOrCancelLenderReservation(HttpSession session, @PathVariable("id") Long id) {
 		if (id == null) {
@@ -150,7 +155,7 @@ public class ReservationController {
 
 		return new ResponseEntity<>(reservations, HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "/driver/history", method = RequestMethod.GET)
 	public ResponseEntity<List<ReservationDTO>> getReservationsHistoryByDriver(HttpSession session) {
 		String subject = (String) session.getAttribute(Constants.SUBJECT);
