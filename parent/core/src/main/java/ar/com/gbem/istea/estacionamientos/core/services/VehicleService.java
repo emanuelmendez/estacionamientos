@@ -39,12 +39,9 @@ public class VehicleService {
 	}
 
 	@Transactional
-	public void deleteUserVehicle(long vehicleId) throws VehicleNotFoundException {
+	public void deleteUserVehicle(long vehicleId) {
 		
 		vehicleRepo.deleteById(vehicleId);
-
-		LOG.error("Vehicle not found: id {}", vehicleId);
-		throw new VehicleNotFoundException();
 	}
 
 	@Transactional

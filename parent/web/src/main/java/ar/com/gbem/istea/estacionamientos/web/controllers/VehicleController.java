@@ -45,7 +45,7 @@ public class VehicleController {
 		try {
 			vehicleService.deleteUserVehicle(idVehicle);
 			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (VehicleNotFoundException e) {
+		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
 	}
