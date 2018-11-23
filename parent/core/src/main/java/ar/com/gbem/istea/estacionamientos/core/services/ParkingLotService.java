@@ -41,6 +41,9 @@ public class ParkingLotService {
 	@Autowired
 	private ParkingRepository parkingRepository;
 	
+	@Autowired
+	private SolrService solrService;
+	
 	public List<ParkingLotDTO> getParkingLotsByUser(String subject) throws UserNotFoundException, ParkingLotNotFoundException {
 		
 		List<ParkingLot> plots = parkingLotRepo.getParkingLotsBySubject(subject);
@@ -128,5 +131,12 @@ public class ParkingLotService {
 				return;
 			}
 		}
+	}
+	
+	@Transactional
+	public void deleteLotById(long lotId) throws ParkingLotNotFoundException {
+		
+		//solrService.deleteParkingLot(lotId);
+		parkingRepository.deleteById(lotId);
 	}
 }

@@ -1,6 +1,5 @@
 package ar.com.gbem.istea.estacionamientos.core.services;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -12,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ar.com.gbem.istea.estacionamientos.core.DozerUtil;
 import ar.com.gbem.istea.estacionamientos.core.exceptions.UserNotFoundException;
 import ar.com.gbem.istea.estacionamientos.core.exceptions.VehicleNotFoundException;
+import ar.com.gbem.istea.estacionamientos.repositories.VehicleRepo;
 import ar.com.gbem.istea.estacionamientos.repositories.VehicleRepository;
 import ar.com.gbem.istea.estacionamientos.repositories.model.User;
 import ar.com.gbem.istea.estacionamientos.repositories.model.Vehicle;
@@ -29,6 +29,9 @@ public class VehicleService {
 	@Autowired
 	private VehicleRepository vehicleRepository;
 	
+	@Autowired
+	private VehicleRepo vehicleRepo;
+	
 	@Transactional(readOnly = true)
 	public List<VehicleDTO> getVehiclescByUserSubject(String subject) {
 		List<Vehicle> vehicles = vehicleRepository.getVehiclesBySubject(subject);
@@ -36,19 +39,9 @@ public class VehicleService {
 	}
 
 	@Transactional
-	public void deleteUserVehicle(UserResultDTO driverDTO, long vehicleId) throws UserNotFoundException, VehicleNotFoundException {
+	public void deleteUserVehicle(long vehicleId) {
 		
-		User user = vehicleRepository.findById(driverDTO.getId()).orElseThrow(IllegalArgumentException::new);
-
-		for (Iterator<Vehicle> iterator = user.getVehicles().iterator(); iterator.hasNext();) {
-			if (iterator.next().getId() == vehicleId) {
-				iterator.remove();
-				return;
-			}
-		}
-
-		LOG.error("Vehicle not found: id {}", vehicleId);
-		throw new VehicleNotFoundException();
+		vehicleRepo.deleteById(vehicleId);
 	}
 
 	@Transactional
