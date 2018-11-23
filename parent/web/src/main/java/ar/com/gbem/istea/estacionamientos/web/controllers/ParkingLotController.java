@@ -68,4 +68,15 @@ public class ParkingLotController {
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "/parkinglot/{idParkinglot}", method = RequestMethod.DELETE)
+	public ResponseEntity<String> deleteLotById(HttpSession session, @PathVariable Long idParkinglot) {
+		
+		try {
+			parkingLotService.deleteLotById(idParkinglot);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (ParkingLotNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+	}
 }

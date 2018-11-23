@@ -41,15 +41,12 @@ public class VehicleController {
 
 	@RequestMapping(value = "/vehicles/{idVehicle}", method = RequestMethod.DELETE)
 	public ResponseEntity<String> deleteUserVehicleById(HttpSession session, @PathVariable Long idVehicle) {
-		
-		UserResultDTO driver = (UserResultDTO) session.getAttribute(Constants.USER);
+
 		try {
-			vehicleService.deleteUserVehicle(driver, idVehicle);
+			vehicleService.deleteUserVehicle(idVehicle);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (VehicleNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		} catch (UserNotFoundException e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 

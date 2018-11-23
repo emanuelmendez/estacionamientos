@@ -29,7 +29,7 @@ public class ParkingLot implements Serializable, Comparable<ParkingLot> {
 	@Column(name = "LOT_NUMBER")
 	private int lotNumber;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ADDRESS")
 	private Address address;
 
