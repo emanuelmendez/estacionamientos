@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ar.com.gbem.istea.estacionamientos.core.exceptions.ParkingLotNotFoundException;
 import ar.com.gbem.istea.estacionamientos.core.exceptions.UserNotFoundException;
 import ar.com.gbem.istea.estacionamientos.core.services.ParkingLotService;
+import ar.com.gbem.istea.estacionamientos.core.services.SolrService;
 import ar.com.gbem.istea.estacionamientos.web.Constants;
 import ar.gob.gbem.istea.estacionamientos.dtos.ParkingLotDTO;
 import ar.gob.gbem.istea.estacionamientos.dtos.UserResultDTO;
@@ -26,9 +27,13 @@ public class ParkingLotController {
 
 	@Autowired
 	private ParkingLotService parkingLotService;
-	
+
+	@Autowired
+	private SolrService solrService;
+
 	@RequestMapping(value = "/parkinglot", method = RequestMethod.GET)
-	public ResponseEntity<List<ParkingLotDTO>> getParkingLotsByUser(HttpSession session) throws ParkingLotNotFoundException {
+	public ResponseEntity<List<ParkingLotDTO>> getParkingLotsByUser(HttpSession session)
+			throws ParkingLotNotFoundException {
 		String subject = (String) session.getAttribute(Constants.SUBJECT);
 		List<ParkingLotDTO> parkingLots;
 		try {
@@ -42,7 +47,7 @@ public class ParkingLotController {
 
 		return new ResponseEntity<>(parkingLots, HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "/parkinglot", method = RequestMethod.POST, consumes = { "application/json" })
 	public ResponseEntity<String> addNewParkingLot(HttpSession session,
 			@RequestBody(required = true) List<ParkingLotDTO> parkingData) {
@@ -50,14 +55,16 @@ public class ParkingLotController {
 		String subject = (String) session.getAttribute(Constants.SUBJECT);
 		try {
 			parkingLotService.addParkingLot(subject, lender, parkingData);
+			parkingLotService.updateParkingLotsBySubject(subject);
 		} catch (UserNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/parkinglot/{idParkinglot}", method = RequestMethod.PATCH, consumes = {
-	"application/json" })
+			"application/json" })
 	public ResponseEntity<String> editParkingLot(HttpSession session, @PathVariable Long idParkinglot,
 			@RequestBody(required = true) ParkingLotDTO parkingData) {
 		UserResultDTO lender = (UserResultDTO) session.getAttribute(Constants.USER);
@@ -66,16 +73,19 @@ public class ParkingLotController {
 		} catch (UserNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+		solrService.post(idParkinglot);
+
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "/parkinglot/{idParkinglot}", method = RequestMethod.DELETE)
 	public ResponseEntity<String> deleteLotById(HttpSession session, @PathVariable Long idParkinglot) {
-		
+
 		try {
 			parkingLotService.deleteLotById(idParkinglot);
+			solrService.delete(idParkinglot);
 			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (ParkingLotNotFoundException e) {
+		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
 	}

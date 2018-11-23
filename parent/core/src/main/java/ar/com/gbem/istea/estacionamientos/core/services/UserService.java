@@ -73,6 +73,9 @@ public class UserService {
 		user.setActive(true);
 		user.setToken(subject);
 		user.setUsername(dto.getEmail());
+		Date now = new Date();
+		user.setSince(now);
+		user.setLastUpdated(now);
 
 		try {
 			return mapper.map(userRepo.save(user), UserResultDTO.class);
