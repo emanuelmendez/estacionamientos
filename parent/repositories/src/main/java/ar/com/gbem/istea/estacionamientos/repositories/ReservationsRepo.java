@@ -33,8 +33,8 @@ public interface ReservationsRepo extends CrudRepository<Reservation, Long> {
 	long findOccupancy(@Param("parkingLotId") long parkingLotId, @Param("date_from") Date dateFrom,
 			@Param("date_to") Date dateTo, @Param("status") EnumSet<Status> activeStatus);
 
-	@Query("from Reservation r where r.driver.token = :subject and r.status in :status order by r.from desc")
-	List<Reservation> getDoneOfDriverBySubject(String subject, EnumSet<Status> of);
+	@Query("from Reservation r where r.driver.token = :subject and r.status = :status order by r.from desc")
+	List<Reservation> getDoneOfDriverBySubject(@Param("subject") String subject, @Param("status") Status status);
 
 	@Query("from Reservation r where r.status in :status and :now between r.from and r.to")
 	List<Reservation> findAllApprovedStarted(@Param("status") EnumSet<Status> status, @Param("now") Date now);

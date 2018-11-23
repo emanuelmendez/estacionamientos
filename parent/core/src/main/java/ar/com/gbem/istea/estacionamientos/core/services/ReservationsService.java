@@ -1,11 +1,12 @@
 package ar.com.gbem.istea.estacionamientos.core.services;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,14 +17,18 @@ import ar.com.gbem.istea.estacionamientos.core.exceptions.ReservationNotCancella
 import ar.com.gbem.istea.estacionamientos.core.exceptions.ReservationNotConfirmableException;
 import ar.com.gbem.istea.estacionamientos.repositories.ParkingLotsRepo;
 import ar.com.gbem.istea.estacionamientos.repositories.ReservationsRepo;
+import ar.com.gbem.istea.estacionamientos.repositories.ReviewRepo;
 import ar.com.gbem.istea.estacionamientos.repositories.UserRepository;
 import ar.com.gbem.istea.estacionamientos.repositories.model.ParkingLot;
 import ar.com.gbem.istea.estacionamientos.repositories.model.ParkingLotSolr;
 import ar.com.gbem.istea.estacionamientos.repositories.model.Reservation;
+import ar.com.gbem.istea.estacionamientos.repositories.model.Review;
+import ar.com.gbem.istea.estacionamientos.repositories.model.Score;
 import ar.com.gbem.istea.estacionamientos.repositories.model.Status;
 import ar.com.gbem.istea.estacionamientos.repositories.model.User;
 import ar.gob.gbem.istea.estacionamientos.dtos.ReservationDTO;
 import ar.gob.gbem.istea.estacionamientos.dtos.ReservationOptionsDTO;
+import ar.gob.gbem.istea.estacionamientos.dtos.ReviewDTO;
 import ar.gob.gbem.istea.estacionamientos.dtos.SearchDTO;
 import ar.gob.gbem.istea.estacionamientos.dtos.UserResultDTO;
 
@@ -32,6 +37,9 @@ public class ReservationsService {
 
 	@Autowired
 	private ReservationsRepo reservationsRepo;
+
+	@Autowired
+	private ReviewRepo reviewRepo;
 
 	@Autowired
 	private ParkingLotsRepo parkingLotRepo;
@@ -44,6 +52,8 @@ public class ReservationsService {
 
 	@Autowired
 	private DozerUtil mapper;
+
+	private static final Logger logger = LoggerFactory.getLogger(ReservationsService.class);
 
 	private static final EnumSet<Status> ACTIVE_STATUS = EnumSet.of(Status.IN_PROGRESS, Status.APPROVED,
 			Status.PENDING);
@@ -150,29 +160,26 @@ public class ReservationsService {
 		return mapper.getReservationsFrom(reservations);
 	}
 
-	@Transactional(readOnly = true)
-	public List<ReservationDTO> getDoneOfDriverBySubject(String subject) {
-		List<Reservation> reservations = reservationsRepo.getDoneOfDriverBySubject(subject, EnumSet.of(Status.DONE));
-		if (reservations == null)
-			return Collections.emptyList();
-		else
-			return mapper.getReservationsFrom(reservations);
-	}
-
 	@Transactional
 	public void updateReservationsStatus() {
 		final Date now = new Date();
-		List<Reservation> approved = reservationsRepo
+		List<Reservation> approvedOrPending = reservationsRepo
 				.findAllApprovedStarted(EnumSet.of(Status.PENDING, Status.APPROVED), now);
-		for (Reservation reservation : approved) {
+		for (Reservation reservation : approvedOrPending) {
 			if (reservation.getStatus().equals(Status.APPROVED)) {
 				reservation.setStatus(Status.IN_PROGRESS);
 			} else {
 				reservation.setStatus(Status.CANCELLED);
 			}
 		}
-		reservationsRepo.saveAll(approved);
-		for (Reservation reservation : approved) {
+		reservationsRepo.saveAll(approvedOrPending);
+
+		if (logger.isInfoEnabled()) {
+			logger.info(String.format("Se cambió de estado a las reservas pendientes y aprobadas: %d",
+					approvedOrPending.size()));
+		}
+
+		for (Reservation reservation : approvedOrPending) {
 			notificationService.send("¡Comenzó tu reserva!", "Volvé por tu vehículo más tarde",
 					reservation.getDriver().getDeviceToken());
 			notificationService.send(String.format("Comienza la reserva de %s", reservation.getDriver().getName()),
@@ -183,20 +190,44 @@ public class ReservationsService {
 		for (Reservation reservation : inProgress) {
 			reservation.setStatus(Status.DONE);
 		}
+		reservationsRepo.saveAll(inProgress);
+
 		for (Reservation reservation : inProgress) {
 			notificationService.send("¡Terminó tu reserva!", "No te olvides de calificar al usuario",
 					reservation.getDriver().getDeviceToken());
 			notificationService.send(String.format("Fin de la reserva de %s", reservation.getDriver().getName()),
-					"Ganaste $" + reservation.getValue().doubleValue(), reservation.getLender().getDeviceToken());
+					String.format("Ganaste $ %.2f", reservation.getValue().doubleValue()),
+					reservation.getLender().getDeviceToken());
 		}
 
-		reservationsRepo.saveAll(inProgress);
+		if (logger.isInfoEnabled()) {
+			logger.info(String.format("Se cambió de estado a las reservas en curso: %d", inProgress.size()));
+		}
+
 	}
-	
+
 	@Transactional(readOnly = true)
 	public List<ReservationDTO> getReservationHistoryBySubject(String subject) {
-		List<Reservation> reservations = reservationsRepo.getOfDriverBySubject(subject, EnumSet.of(Status.DONE));
+		List<Reservation> reservations = reservationsRepo.getDoneOfDriverBySubject(subject, Status.DONE);
 		return mapper.getReservationsFrom(reservations);
+	}
+
+	@Transactional
+	public void postReview(final long id, final ReviewDTO reviewDTO) {
+		Reservation reservation = reservationsRepo.findById(id).orElseThrow(IllegalArgumentException::new);
+
+		if (reservation.getReview() != null) {
+			reviewRepo.delete(reservation.getReview());
+			reservation.setReview(null);
+		}
+
+		Review review = new Review();
+		review.setDateReviewed(new Date());
+		review.setComment(reviewDTO.getComment());
+		review.setScore(Score.of(reviewDTO.getScore()));
+		reservation.setReview(review);
+		review.setReservation(reservation);
+
 	}
 
 }
