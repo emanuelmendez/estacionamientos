@@ -192,5 +192,11 @@ public class ReservationsService {
 
 		reservationsRepo.saveAll(inProgress);
 	}
+	
+	@Transactional(readOnly = true)
+	public List<ReservationDTO> getReservationHistoryBySubject(String subject) {
+		List<Reservation> reservations = reservationsRepo.getOfDriverBySubject(subject, EnumSet.of(Status.DONE));
+		return mapper.getReservationsFrom(reservations);
+	}
 
 }
