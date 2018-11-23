@@ -150,4 +150,16 @@ public class ReservationController {
 
 		return new ResponseEntity<>(reservations, HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "/driver/history", method = RequestMethod.GET)
+	public ResponseEntity<List<ReservationDTO>> getReservationsHistoryByDriver(HttpSession session) {
+		String subject = (String) session.getAttribute(Constants.SUBJECT);
+
+		List<ReservationDTO> reservations = reservationsService.getReservationHistoryBySubject(subject);
+		if (reservations.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+
+		return new ResponseEntity<>(reservations, HttpStatus.OK);
+	}
 }
